@@ -38,7 +38,7 @@ export default function TechAdminLoginPage() {
         <button type="button" className="admin-back" onClick={() => { window.location.href = "/login"; }}>
           ← Employee login
         </button>
-        <span className="brand-mark admin-login-mark"><span className="brand-letter">O</span></span>
+        <span className="brand-mark admin-login-mark" aria-hidden="true"><i /><i /><i /><i /></span>
         <p className="login-card-eyebrow">RESTRICTED SYSTEM AREA</p>
         <h1>Tech Admin Login</h1>
         <p>Use the private Tech Admin password. The employee company password cannot open Data Control.</p>

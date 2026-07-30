@@ -57,9 +57,7 @@ export default function LoginPage() {
     <main className="login-shell">
       <section className="login-brand-panel">
         <div className="login-brand">
-          <span className="brand-mark">
-            <span className="brand-letter">O</span>
-          </span>
+          <span className="brand-mark" aria-hidden="true"><i /><i /><i /><i /></span>
           <div>
             <strong>Operations Distribution Center</strong>
             <span>Property workspace</span>
@@ -120,9 +118,7 @@ export default function LoginPage() {
 
         <div className="login-card">
           <div className="mobile-login-brand">
-            <span className="brand-mark compact">
-              <span className="brand-letter">O</span>
-            </span>
+            <span className="brand-mark compact" aria-hidden="true"><i /><i /><i /><i /></span>
             <strong>Operations Distribution Center</strong>
           </div>
 

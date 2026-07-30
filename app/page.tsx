@@ -232,7 +232,7 @@ export default function Home() {
     <main className="app-shell">
       <aside className="sidebar">
         <div className="brand">
-          <div className="brand-mark"><span className="brand-letter">O</span></div>
+          <div className="brand-mark" aria-label="Operations Distribution Center"><i /><i /><i /><i /></div>
           <div><strong>Operations Distribution Center</strong><span>Property workspace</span></div>
         </div>
         <nav aria-label="Primary navigation">
@@ -270,7 +270,7 @@ export default function Home() {
 
       <section className="workspace">
         <header className="topbar">
-          <div className="mobile-brand"><span className="brand-mark compact"><span className="brand-letter">O</span></span><strong>Operations Distribution Center</strong></div>
+          <div className="mobile-brand"><span className="brand-mark compact" aria-hidden="true"><i /><i /><i /><i /></span><strong>Operations Distribution Center</strong></div>
           <label className="search">
             <span>⌕</span>
             <input ref={searchInput} value={query} onFocus={() => setSearchOpen(true)} onChange={(event) => setQuery(event.target.value)} placeholder="Search tasks, work orders, vendors, or properties…" aria-label="Search all applications" />
