@@ -15,6 +15,8 @@ type RoutedRow = {
   department?: string;
   assignee?: string;
   notes?: string;
+  last_updated_at?: string;
+  created_at?: string;
   vendor?: string;
   property?: string;
   address?: string;
@@ -62,6 +64,80 @@ function priorityLabel(code = "") {
 
 function normalized(value: unknown) {
   return String(value || "").trim().toLowerCase();
+}
+
+function importedTimestamp(row: RoutedRow, fallback: string) {
+  const value = row.last_updated_at || row.created_at || "";
+  const buildiumDate = String(value).match(
+    /^(\d{1,2})\/(\d{1,2})\/(\d{4})[ T](\d{1,2}):(\d{2})(?::(\d{2}))?$/,
+  );
+  if (buildiumDate) {
+    const [, monthText, dayText, yearText, hourText, minuteText, secondText] =
+      buildiumDate;
+    const year = Number(yearText);
+    const month = Number(monthText) - 1;
+    const day = Number(dayText);
+    const secondSundayMarch =
+      8 + ((7 - new Date(Date.UTC(year, 2, 8)).getUTCDay()) % 7);
+    const firstSundayNovember =
+      1 + ((7 - new Date(Date.UTC(year, 10, 1)).getUTCDay()) % 7);
+    const localMarker = Date.UTC(year, month, day, Number(hourText));
+    const dstStart = Date.UTC(year, 2, secondSundayMarch, 2);
+    const dstEnd = Date.UTC(year, 10, firstSundayNovember, 2);
+    const easternOffsetHours =
+      localMarker >= dstStart && localMarker < dstEnd ? 4 : 5;
+    return new Date(
+      Date.UTC(
+        year,
+        month,
+        day,
+        Number(hourText) + easternOffsetHours,
+        Number(minuteText),
+        Number(secondText || 0),
+      ),
+    ).toISOString();
+  }
+  const date = new Date(value);
+  return Number.isNaN(date.getTime()) ? fallback : date.toISOString();
+}
+
+function updateList(value: unknown) {
+  if (Array.isArray(value)) return value;
+  return value && typeof value === "object" ? [value] : [];
+}
+
+function mergeImportedUpdate(
+  existing: unknown,
+  text: string | undefined,
+  createdAt: string,
+  fallbackId: number,
+) {
+  const updates = updateList(existing);
+  const cleaned = String(text || "").trim();
+  if (!cleaned) return updates;
+  const duplicate = updates.some((item) => {
+    if (!item || typeof item !== "object") return false;
+    const update = item as { text?: string; createdAt?: string };
+    return (
+      String(update.text || "").trim() === cleaned &&
+      String(update.createdAt || "") === createdAt
+    );
+  });
+  if (duplicate) return updates;
+  return [
+    {
+      id: Number.isFinite(Date.parse(createdAt))
+        ? Date.parse(createdAt) + fallbackId
+        : Date.now() + fallbackId,
+      text: cleaned,
+      createdAt,
+    },
+    ...updates,
+  ].sort(
+    (left, right) =>
+      new Date(String((right as { createdAt?: string }).createdAt || 0)).getTime() -
+      new Date(String((left as { createdAt?: string }).createdAt || 0)).getTime(),
+  );
 }
 
 async function databaseRequest(
@@ -143,6 +219,7 @@ export async function POST(request: NextRequest) {
           ? normalized(task.buildiumTaskId) === normalized(externalId)
           : normalized(task.taskName) === normalized(row.title),
       );
+      const sourceUpdatedAt = importedTimestamp(row, now);
       return {
         ...(existing || {}),
         id: existing?.id || Date.now() * 1000 + index,
@@ -155,13 +232,23 @@ export async function POST(request: NextRequest) {
         project: row.project || "",
         department: row.department || "",
         assignee: row.assignee || "",
-        remarks: row.notes || "",
+        remarks: "",
         buildiumTaskId: externalId,
         buildiumTaskUrl: row.external_url || "",
         archived: false,
-        updates: Array.isArray(existing?.updates) ? existing.updates : [],
-        lastUpdatedAt: now,
-        dateStarted: existing?.dateStarted || now.slice(0, 10),
+        updates: mergeImportedUpdate(
+          existing?.updates,
+          row.notes,
+          sourceUpdatedAt,
+          index,
+        ),
+        lastUpdatedAt: sourceUpdatedAt,
+        dateStarted:
+          existing?.dateStarted ||
+          importedTimestamp(
+            { created_at: row.created_at },
+            now,
+          ).slice(0, 10),
       };
     });
 

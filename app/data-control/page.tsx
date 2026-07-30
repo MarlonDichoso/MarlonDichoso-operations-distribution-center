@@ -8,6 +8,7 @@ type Row = {
   unit: string; vendor: string; category: string; priority_code: string;
   status_code: string; due_date: string; assignee: string; department: string;
   project: string; notes: string; external_id: string; external_url: string;
+  last_updated_at: string; created_at: string;
   route: Route; reason: string;
 };
 type ImportHistory = {
@@ -85,6 +86,8 @@ function mapped(raw: Record<string,string>, id: number): Row {
     notes: pick(raw, ["Notes","Latest Update","Comments"]),
     external_id: pick(raw, ["TaskId","Task ID","Work Order","Work Order Number","WO#"]),
     external_url: pick(raw, ["URL","Task URL","Work Order URL"]),
+    last_updated_at: pick(raw, ["Last updated date","Last Updated","Updated At"]),
+    created_at: pick(raw, ["Creation date","Created At","Created"]),
     route, reason,
   };
 }
