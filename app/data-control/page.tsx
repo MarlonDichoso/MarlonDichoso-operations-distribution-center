@@ -65,8 +65,11 @@ function mapped(raw: Record<string,string>, id: number): Row {
   const searchable = `${title} ${description} ${address} ${vendor} ${category}`.toLowerCase();
   const maintenance = maintenanceWords.filter((word) => searchable.includes(word)).length + (vendor ? 2 : 0) + (address ? 1 : 0);
   const admin = adminWords.filter((word) => searchable.includes(word)).length;
+  const administrativeCategory =
+    /accounting|administration|management|legal|general inquiry|inquiry|question|suggestion|feedback|leasing/i.test(category);
   let route: Route = "task_management", reason = "General administrative task";
-  if (maintenance >= 2 && maintenance > admin) { route = "maintenance"; reason = vendor ? "Vendor/property work detected" : "Maintenance work detected"; }
+  if (administrativeCategory) { route = "task_management"; reason = "Administrative category detected"; }
+  else if (maintenance >= 2 && maintenance > admin) { route = "maintenance"; reason = vendor ? "Vendor/property work detected" : "Maintenance work detected"; }
   else if (admin > maintenance || (title && maintenance === 0)) { route = "task_management"; reason = admin ? "Administrative work detected" : "General task"; }
   const priority = pick(raw, ["Priority"]).toLowerCase();
   const status = pick(raw, ["Status"]).toLowerCase();
