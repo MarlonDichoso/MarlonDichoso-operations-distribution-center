@@ -232,7 +232,7 @@ export async function POST(request: NextRequest) {
         project: row.project || "",
         department: row.department || "",
         assignee: row.assignee || "",
-        remarks: "",
+        remarks: undefined,
         buildiumTaskId: externalId,
         buildiumTaskUrl: row.external_url || "",
         archived: false,

@@ -1141,8 +1141,7 @@ body.dark .form-field label{
     1fr
     1fr
     .7fr
-    1fr
-    1.6fr;
+    1fr;
 
     background:#172033;
 
@@ -1217,8 +1216,7 @@ body.dark .form-field label{
     1fr
     1fr
     .7fr
-    1fr
-    1.6fr;
+    1fr;
 
     background:white;
 
@@ -1761,30 +1759,6 @@ body.dark .update-meta{
 .empty-updates{
 
     color:#6b7280;
-
-}
-
-/* ==========================
-   NOTES
-========================== */
-
-.notes-box{
-
-    width:100%;
-
-    display:block;
-
-    min-height:42px;
-
-    resize:vertical;
-
-    border:1px solid #d1d5db;
-
-    border-radius:6px;
-
-    padding:8px;
-
-    font-size:12px;
 
 }
 
@@ -3434,8 +3408,6 @@ focusable="false">
 
                 <div>Status</div>
 
-                <div>Notes</div>
-
             </div>
 
             <div
@@ -3753,11 +3725,6 @@ onclick="closeAddTaskPopup()">
                     type="date">
                 </div>
 
-                <input
-                id="remarks"
-                class="wide-field"
-                placeholder="Notes">
-
                 <div class="add-task-actions">
                     <button
                     class="secondary"
@@ -3806,7 +3773,6 @@ const sampleTasks = [
         dateStarted: "2026-06-22",
         dueDate: "2026-06-29",
         priority: "High",
-        remarks: "Collect updates from each category before final review.",
         status: "In Progress",
         archived: false
     },
@@ -3820,7 +3786,6 @@ const sampleTasks = [
         dateStarted: "2026-06-20",
         dueDate: "2026-07-03",
         priority: "Medium",
-        remarks: "Verify phone numbers and email addresses from recent inquiries.",
         status: "To Do",
         archived: false
     },
@@ -3834,7 +3799,6 @@ const sampleTasks = [
         dateStarted: "2026-06-24",
         dueDate: "2026-06-27",
         priority: "High",
-        remarks: "Flag missing purchase order references before payment run.",
         status: "In Progress",
         archived: false
     },
@@ -3848,7 +3812,6 @@ const sampleTasks = [
         dateStarted: "2026-06-18",
         dueDate: "2026-07-05",
         priority: "Low",
-        remarks: "Include IT account setup, safety briefing, and manager introduction.",
         status: "To Do",
         archived: false
     },
@@ -3862,7 +3825,6 @@ const sampleTasks = [
         dateStarted: "2026-06-10",
         dueDate: "2026-06-21",
         priority: "Medium",
-        remarks: "Completed sample task included to populate the archive view.",
         status: "Done",
         archived: true
     }
@@ -5003,11 +4965,6 @@ function addTask(){
             "priority"
         ).value,
 
-        remarks:
-        document.getElementById(
-            "remarks"
-        ).value,
-
         updates:[],
 
         status:"To Do",
@@ -5067,10 +5024,6 @@ function clearForm(){
     document.getElementById(
         "priority"
     ).value = "Medium";
-
-    document.getElementById(
-        "remarks"
-    ).value = "";
 
 }
 
@@ -5212,22 +5165,6 @@ value
 
 }
 
-function updateRemarks(
-id,
-value
-){
-
-    const task =
-    getTaskById(id);
-
-    if(!task) return;
-
-    task.remarks = value;
-
-    saveTasks();
-
-}
-
 function updateDepartment(
 id,
 value
@@ -5365,11 +5302,6 @@ function openTaskDetails(id){
                 <select onchange="updateTaskDetail(${taskActionId}, 'status', this.value)">
                     ${getStatusOptionsHtml(task.status)}
                 </select>
-            </div>
-
-            <div class="detail-field">
-                <label>Notes</label>
-                <textarea oninput="updateTaskDetail(${taskActionId}, 'remarks', this.value)">${escapeHtml(task.remarks || "")}</textarea>
             </div>
 
             <div class="detail-field">
@@ -6570,12 +6502,6 @@ function getFilteredTasks(){
             .toLowerCase()
             .includes(search)
 
-            ||
-
-            (task.remarks || "")
-            .toLowerCase()
-            .includes(search)
-
         );
 
     }
@@ -7069,22 +6995,6 @@ function renderTasks(){
 
             </div>
 
-            <div>
-
-                <textarea
-
-                class="notes-box"
-
-                oninput="
-                updateRemarks(
-                ${taskActionId},
-                this.value
-                )"
-
-                >${task.remarks || ""}</textarea>
-
-            </div>
-
         </div>
 
         `;
@@ -7508,8 +7418,7 @@ function exportToCSV(){
         "Due",
         "Priority",
         "Status",
-        "Description",
-        "Notes"
+        "Description"
 
     ]];
 
@@ -7525,8 +7434,7 @@ function exportToCSV(){
             task.dueDate,
             task.priority,
             task.status,
-            task.description,
-            task.remarks
+            task.description
 
         ]);
 
@@ -7603,7 +7511,6 @@ function downloadTableExcel(){
             <td>${escapeHtml(task.priority)}</td>
             <td>${escapeHtml(task.status)}</td>
             <td>${escapeHtml(task.description)}</td>
-            <td>${escapeHtml(task.remarks)}</td>
         </tr>
 
     `)
@@ -7628,7 +7535,6 @@ function downloadTableExcel(){
                             <th>Priority</th>
                             <th>Status</th>
                             <th>Description</th>
-                            <th>Notes</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -8068,8 +7974,6 @@ function importBuildiumRows(rows){
             status:
             importedStatus,
 
-            remarks:"",
-
             updates:
             latestUpdate
             ?
@@ -8293,11 +8197,6 @@ function(event){
                 hasDescription
                 ? cols[8]
                 : "",
-
-                remarks:
-                hasDescription
-                ? cols[9]
-                : cols[8],
 
                 updates:[],
 
