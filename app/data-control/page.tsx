@@ -92,6 +92,11 @@ export default function DataControlPage() {
   const [message, setMessage] = useState("Choose a CSV export to begin.");
   const [busy, setBusy] = useState(false);
   const [history, setHistory] = useState<ImportHistory[]>([]);
+  const [distributionNotice, setDistributionNotice] = useState<{
+    total: number;
+    tasks: number;
+    maintenance: number;
+  } | null>(null);
   const frame = useRef<HTMLIFrameElement>(null);
   const counts = useMemo(() => ({
     tasks: rows.filter((r) => r.route === "task_management").length,
@@ -110,6 +115,11 @@ export default function DataControlPage() {
   }
 
   useEffect(() => { loadHistory(); }, []);
+  useEffect(() => {
+    if (!distributionNotice) return;
+    const timer = window.setTimeout(() => setDistributionNotice(null), 10000);
+    return () => window.clearTimeout(timer);
+  }, [distributionNotice]);
 
   async function chooseFile(event: ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0]; if (!file) return;
@@ -130,6 +140,11 @@ export default function DataControlPage() {
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || "Import failed.");
       setMessage(`Complete: ${data.task_management} to Task Management and ${data.maintenance} to Maintenance & Vendors.`);
+      setDistributionNotice({
+        total: Number(data.task_management || 0) + Number(data.maintenance || 0),
+        tasks: Number(data.task_management || 0),
+        maintenance: Number(data.maintenance || 0),
+      });
       await loadHistory();
     } catch (error) { setMessage(error instanceof Error ? error.message : "Import failed."); }
     finally { setBusy(false); }
@@ -185,7 +200,9 @@ export default function DataControlPage() {
             </select></td>
           </tr>) : <tr><td colSpan={3} className="routing-empty">No CSV selected.</td></tr>}</tbody>
         </table></div>
-        <button className="primary-control-button" disabled={busy || !rows.length} onClick={distribute}>Distribute Imported Tasks</button>
+        <button className="primary-control-button" disabled={busy || !rows.length} onClick={distribute}>
+          {busy ? "Distributing Tasks..." : "Distribute Imported Tasks"}
+        </button>
       </article>
       <article className="control-card backup-card">
         <div className="control-card-heading"><div><span>02</span><h2>Document backup</h2></div></div>
@@ -209,5 +226,18 @@ export default function DataControlPage() {
       </table></div>
     </section>
     <div className="control-message" role="status">{message}</div>
+    {distributionNotice && (
+      <aside className="distribution-notice" role="status" aria-live="assertive">
+        <span className="distribution-notice-icon">✓</span>
+        <div>
+          <strong>Distribution complete</strong>
+          <p>{distributionNotice.total} records were successfully updated in the shared database.</p>
+          <small>
+            {distributionNotice.tasks} Task Management · {distributionNotice.maintenance} Maintenance &amp; Vendors
+          </small>
+        </div>
+        <button type="button" onClick={() => setDistributionNotice(null)} aria-label="Close notification">×</button>
+      </aside>
+    )}
   </main>;
 }
