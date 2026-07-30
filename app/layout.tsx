@@ -14,9 +14,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Unified Operations Hub",
+  title: "Operations Distribution Center",
   description:
-    "A single front layer for Task Management and Maintenance Vendor Monitoring.",
+    "A central routing layer for administrative and maintenance work.",
   icons: {
     icon: "/favicon.svg",
     shortcut: "/favicon.svg",

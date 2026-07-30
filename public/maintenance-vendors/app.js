@@ -879,7 +879,7 @@ async function printEstimateReport(task) {
       <tbody>${attachmentRows}</tbody>
     </table>
     <div class="notes"><strong>Estimate Notes / Exclusions</strong>${esc(notes || "No additional notes provided.")}</div>
-    <div class="footer"><span>Unified Ops · Maintenance Management Hub</span><span>Estimate Report ${esc(reportNumber)}</span></div>
+    <div class="footer"><span>Operations Distribution Center · Maintenance Management Hub</span><span>Estimate Report ${esc(reportNumber)}</span></div>
   </main></body></html>`);
   reportWindow.document.close();
 }

@@ -58,10 +58,10 @@ export default function LoginPage() {
       <section className="login-brand-panel">
         <div className="login-brand">
           <span className="brand-mark">
-            <span className="brand-letter">U</span>
+            <span className="brand-letter">O</span>
           </span>
           <div>
-            <strong>Unified Ops</strong>
+            <strong>Operations Distribution Center</strong>
             <span>Property workspace</span>
           </div>
         </div>
@@ -121,16 +121,16 @@ export default function LoginPage() {
         <div className="login-card">
           <div className="mobile-login-brand">
             <span className="brand-mark compact">
-              <span className="brand-letter">U</span>
+              <span className="brand-letter">O</span>
             </span>
-            <strong>Unified Ops</strong>
+            <strong>Operations Distribution Center</strong>
           </div>
 
           <p className="login-card-eyebrow">EMPLOYEE ACCESS</p>
           <h2>{signedIn ? "Workspace access is active" : "Access the company workspace"}</h2>
           <p className="login-subtitle">
             {signedIn
-              ? "This device is currently signed in to Unified Ops."
+              ? "This device is currently signed in to the Operations Distribution Center."
               : "Enter the company password provided in your internal information sheet."}
           </p>
 
@@ -202,7 +202,7 @@ export default function LoginPage() {
         </div>
 
         <footer>
-          Protected by Unified Ops security · Internal employee access
+          Protected internal employee access
         </footer>
       </section>
     </main>

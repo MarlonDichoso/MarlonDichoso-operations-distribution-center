@@ -175,7 +175,7 @@ export default function DataControlPage() {
     <header className="data-control-header">
       <button onClick={() => { location.href = "/"; }}>← Dashboard</button>
       <div>
-        <p>UNIFIED OPS · TECH ADMIN CONSOLE</p>
+        <p>OPERATIONS DISTRIBUTION CENTER · TECH ADMIN CONSOLE</p>
         <h1>Data Control</h1>
         <span>Import once, review routing, and distribute work.</span>
       </div>
@@ -217,7 +217,7 @@ export default function DataControlPage() {
       <article className="control-card backup-card">
         <div className="control-card-heading"><div><span>02</span><h2>Document backup</h2></div></div>
         <p>Download saved PDFs, photos, data, and a searchable index in one organized ZIP.</p>
-        <div className="folder-preview"><strong>Unified-Ops-Backup/</strong><span>Work-Authorizations/</span><span>Owner-Approvals/</span><span>Quote-Requests/</span><span>Work-Verifications/</span><span>Photos/</span><span>Data/</span><span>backup-index.csv</span></div>
+        <div className="folder-preview"><strong>Operations-Distribution-Center-Backup/</strong><span>Work-Authorizations/</span><span>Owner-Approvals/</span><span>Quote-Requests/</span><span>Work-Verifications/</span><span>Photos/</span><span>Data/</span><span>backup-index.csv</span></div>
         <button className="primary-control-button backup-button" disabled={busy} onClick={backup}>Download Document Backup</button>
         <iframe ref={frame} className="backup-frame" src="/work-order-generator/index.html" title="Document backup service"/>
       </article>
@@ -241,7 +241,7 @@ export default function DataControlPage() {
         <div className="distribution-loading-card">
           <span className="distribution-spinner" aria-hidden="true" />
           <strong>Distributing imported tasks</strong>
-          <p>Please wait while Unified Ops updates the shared database and routes every record.</p>
+          <p>Please wait while the Operations Distribution Center updates the shared database and routes every record.</p>
           <span className="distribution-loading-note">Do not close this page.</span>
         </div>
       </div>

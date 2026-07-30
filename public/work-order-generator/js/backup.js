@@ -34,7 +34,7 @@
         ]);
         const company = await getCompanyProfile();
         const zip = new global.JSZip();
-        const root = zip.folder(`Unified-Ops-Backup_${dateStamp()}`);
+        const root = zip.folder(`Operations-Distribution-Center-Backup_${dateStamp()}`);
         const authorizations = root.folder("Work-Authorizations");
         const ownerApprovals = root.folder("Owner-Approvals");
         const quoteRequests = root.folder("Quote-Requests");
@@ -164,7 +164,7 @@
         root.file(
             "README.txt",
             [
-                "UNIFIED OPS DOCUMENT BACKUP",
+                "OPERATIONS DISTRIBUTION CENTER DOCUMENT BACKUP",
                 `Created: ${new Date().toLocaleString()}`,
                 "",
                 "Folders:",
@@ -185,7 +185,7 @@
         });
         const link = document.createElement("a");
         link.href = URL.createObjectURL(blob);
-        link.download = `Unified-Ops-Backup_${dateStamp()}.zip`;
+        link.download = `Operations-Distribution-Center-Backup_${dateStamp()}.zip`;
         document.body.appendChild(link);
         link.click();
         link.remove();

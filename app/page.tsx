@@ -232,8 +232,8 @@ export default function Home() {
     <main className="app-shell">
       <aside className="sidebar">
         <div className="brand">
-          <div className="brand-mark"><span className="brand-letter">U</span></div>
-          <div><strong>Unified Ops</strong><span>Property workspace</span></div>
+          <div className="brand-mark"><span className="brand-letter">O</span></div>
+          <div><strong>Operations Distribution Center</strong><span>Property workspace</span></div>
         </div>
         <nav aria-label="Primary navigation">
           <button className="nav-item active" type="button" onClick={() => { setSearchOpen(false); window.scrollTo({ top: 0, behavior: "smooth" }); }}><span>⌂</span>Home</button>
@@ -270,7 +270,7 @@ export default function Home() {
 
       <section className="workspace">
         <header className="topbar">
-          <div className="mobile-brand"><span className="brand-mark compact"><span className="brand-letter">U</span></span><strong>Unified Ops</strong></div>
+          <div className="mobile-brand"><span className="brand-mark compact"><span className="brand-letter">O</span></span><strong>Operations Distribution Center</strong></div>
           <label className="search">
             <span>⌕</span>
             <input ref={searchInput} value={query} onFocus={() => setSearchOpen(true)} onChange={(event) => setQuery(event.target.value)} placeholder="Search tasks, work orders, vendors, or properties…" aria-label="Search all applications" />
@@ -286,7 +286,7 @@ export default function Home() {
           <section className="welcome">
             <div>
               <p className="date-label">UNIFIED PROPERTY OPERATIONS</p>
-              <h1>Welcome to Unified Ops.</h1>
+              <h1>Welcome to the Operations Distribution Center.</h1>
               <p>A clear view of administrative and maintenance work.</p>
             </div>
             <div className="system-pill"><span className="sync-dot" />All systems connected</div>
@@ -361,7 +361,7 @@ export default function Home() {
           <aside className="utility-drawer" role="dialog" aria-modal="true" aria-labelledby="utility-title" onMouseDown={(event) => event.stopPropagation()}>
             <header>
               <div>
-                <p>UNIFIED OPS</p>
+                <p>OPERATIONS DISTRIBUTION CENTER</p>
                 <h2 id="utility-title">{utilityPanel === "notifications" ? "Notifications" : "Workspace help"}</h2>
                 <span>{utilityPanel === "notifications" ? "Items that may need employee attention." : "Choose the right workspace for the job."}</span>
               </div>
@@ -394,7 +394,7 @@ export default function Home() {
         <div className="shared-search-overlay" role="presentation" onMouseDown={() => setSearchOpen(false)}>
           <section className="shared-search-panel" role="dialog" aria-modal="true" aria-labelledby="shared-search-title" onMouseDown={(event) => event.stopPropagation()}>
             <header>
-              <div><p>UNIFIED OPS</p><h2 id="shared-search-title">Shared search</h2><span>Search across Task Management and Maintenance.</span></div>
+              <div><p>OPERATIONS DISTRIBUTION CENTER</p><h2 id="shared-search-title">Shared search</h2><span>Search across Task Management and Maintenance.</span></div>
               <button type="button" onClick={() => setSearchOpen(false)} aria-label="Close shared search">×</button>
             </header>
             <label>
