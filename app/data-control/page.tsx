@@ -60,12 +60,12 @@ function mapped(raw: Record<string,string>, id: number): Row {
   const title = pick(raw, ["Short description","Task Name","Task","Title","Subject"]) || `Imported record ${id + 1}`;
   const description = pick(raw, ["Description","Long description","Details","Instructions"]);
   const address = pick(raw, ["Property Address","Address","Property","Location"]);
-  const vendor = pick(raw, ["Vendor","Vendor Name","Assigned To","Contractor"]);
+  const vendor = pick(raw, ["Vendor","Vendors","Vendor Name","Contractor"]);
   const category = pick(raw, ["Category","Task Category","Type"]);
   const searchable = `${title} ${description} ${address} ${vendor} ${category}`.toLowerCase();
   const maintenance = maintenanceWords.filter((word) => searchable.includes(word)).length + (vendor ? 2 : 0) + (address ? 1 : 0);
   const admin = adminWords.filter((word) => searchable.includes(word)).length;
-  let route: Route = "review", reason = "No strong routing signal";
+  let route: Route = "task_management", reason = "General administrative task";
   if (maintenance >= 2 && maintenance > admin) { route = "maintenance"; reason = vendor ? "Vendor/property work detected" : "Maintenance work detected"; }
   else if (admin > maintenance || (title && maintenance === 0)) { route = "task_management"; reason = admin ? "Administrative work detected" : "General task"; }
   const priority = pick(raw, ["Priority"]).toLowerCase();
@@ -130,7 +130,10 @@ export default function DataControlPage() {
   }
 
   async function distribute() {
-    if (counts.review) return setMessage(`Assign all ${counts.review} Needs Review row(s) first.`);
+    if (counts.review) {
+      setMessage(`Distribution did not start. Assign all ${counts.review} Needs Review row(s) first.`);
+      return;
+    }
     setBusy(true); setDistributing(true); setDistributionNotice(null); setMessage("Distributing records...");
     try {
       const response = await fetch("/api/data-control/import", {
