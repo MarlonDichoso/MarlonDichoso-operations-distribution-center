@@ -91,6 +91,7 @@ export default function DataControlPage() {
   const [fileName, setFileName] = useState("");
   const [message, setMessage] = useState("Choose a CSV export to begin.");
   const [busy, setBusy] = useState(false);
+  const [distributing, setDistributing] = useState(false);
   const [history, setHistory] = useState<ImportHistory[]>([]);
   const [distributionNotice, setDistributionNotice] = useState<{
     total: number;
@@ -130,7 +131,7 @@ export default function DataControlPage() {
 
   async function distribute() {
     if (counts.review) return setMessage(`Assign all ${counts.review} Needs Review row(s) first.`);
-    setBusy(true); setMessage("Distributing records...");
+    setBusy(true); setDistributing(true); setDistributionNotice(null); setMessage("Distributing records...");
     try {
       const response = await fetch("/api/data-control/import", {
         method: "POST",
@@ -147,7 +148,7 @@ export default function DataControlPage() {
       });
       await loadHistory();
     } catch (error) { setMessage(error instanceof Error ? error.message : "Import failed."); }
-    finally { setBusy(false); }
+    finally { setBusy(false); setDistributing(false); }
   }
 
   async function backup() {
@@ -226,18 +227,30 @@ export default function DataControlPage() {
       </table></div>
     </section>
     <div className="control-message" role="status">{message}</div>
-    {distributionNotice && (
-      <aside className="distribution-notice" role="status" aria-live="assertive">
-        <span className="distribution-notice-icon">✓</span>
-        <div>
-          <strong>Distribution complete</strong>
-          <p>{distributionNotice.total} records were successfully updated in the shared database.</p>
-          <small>
-            {distributionNotice.tasks} Task Management · {distributionNotice.maintenance} Maintenance &amp; Vendors
-          </small>
+    {distributing && (
+      <div className="distribution-loading" role="status" aria-live="assertive" aria-label="Distribution in progress">
+        <div className="distribution-loading-card">
+          <span className="distribution-spinner" aria-hidden="true" />
+          <strong>Distributing imported tasks</strong>
+          <p>Please wait while Unified Ops updates the shared database and routes every record.</p>
+          <span className="distribution-loading-note">Do not close this page.</span>
         </div>
-        <button type="button" onClick={() => setDistributionNotice(null)} aria-label="Close notification">×</button>
-      </aside>
+      </div>
+    )}
+    {distributionNotice && (
+      <div className="distribution-complete-backdrop" role="presentation">
+        <aside className="distribution-notice" role="status" aria-live="assertive">
+          <span className="distribution-notice-icon">✓</span>
+          <div>
+            <strong>Distribution complete</strong>
+            <p>{distributionNotice.total} records were successfully updated in the shared database.</p>
+            <small>
+              {distributionNotice.tasks} Task Management · {distributionNotice.maintenance} Maintenance &amp; Vendors
+            </small>
+          </div>
+          <button type="button" onClick={() => setDistributionNotice(null)}>Done</button>
+        </aside>
+      </div>
     )}
   </main>;
 }
