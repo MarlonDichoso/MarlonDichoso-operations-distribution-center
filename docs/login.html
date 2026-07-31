@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Employee Login | Operations Distribution Center</title>
+  <link rel="icon" href="favicon.svg">
+  <link rel="stylesheet" href="site.css">
+</head>
+<body class="login-page">
+  <main class="login-layout">
+    <section class="login-brand-panel">
+      <div class="brand"><span class="brand-icon"><i></i><i></i><i></i><i></i></span><div><strong>Operations Distribution Center</strong><small>Property workspace</small></div></div>
+      <div class="purpose"><span>DEDICATED OPERATIONS TOOL</span><p>Built exclusively to support the work of <strong>Akolong Technologies</strong> and <strong>Savanna Impala LLC.</strong></p></div>
+      <div class="login-copy">
+        <span>ONE CONNECTED WORKSPACE</span>
+        <h1>Administrative and maintenance work, together.</h1>
+        <p>Enter the company access password to open Task Management, Maintenance &amp; Vendors, and Field Operations Documents.</p>
+      </div>
+    </section>
+    <section class="login-form-panel">
+      <form class="login-card" id="employeeLogin">
+        <span class="eyebrow">EMPLOYEE ACCESS</span>
+        <h2>Access the company workspace</h2>
+        <p>Enter the password provided in the internal employee information sheet.</p>
+        <label>Company Access Password
+          <span class="password-input"><input id="password" type="password" autocomplete="current-password" required autofocus><button id="showPassword" type="button">Show</button></span>
+        </label>
+        <button class="primary" type="submit">Access Workspace <span>→</span></button>
+        <div class="message" id="message" aria-live="polite"></div>
+        <small>For employees of Akolong Technologies and Savanna Impala LLC only.</small>
+      </form>
+    </section>
+  </main>
+  <script src="site-auth.js"></script>
+</body>
+</html>

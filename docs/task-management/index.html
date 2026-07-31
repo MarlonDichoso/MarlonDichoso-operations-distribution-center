@@ -1,0 +1,8496 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<script src="../employee-auth-guard.js"></script>
+
+<meta charset="UTF-8">
+
+<meta
+name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<title>
+Administrative Tasks Hub
+</title>
+
+<style>
+/* ==========================
+   GLOBAL
+========================== */
+
+*{
+    box-sizing:border-box;
+}
+
+html,
+body{
+
+    margin:0;
+    padding:0;
+
+    width:100%;
+    height:100%;
+
+    overflow:hidden;
+
+    font-family:Arial,sans-serif;
+
+    font-size:13px;
+
+    background:#f3f4f6;
+
+    color:#111827;
+
+}
+
+body.dark{
+
+    background:#111827;
+
+    color:#f9fafb;
+
+}
+
+:root{
+
+    --detail-panel-width:clamp(360px,34vw,440px);
+
+}
+
+.app{
+
+    height:100vh;
+
+    width:100vw;
+
+    display:grid;
+
+    grid-template-columns:250px minmax(0,1fr);
+
+    grid-template-rows:56px minmax(0,1fr);
+
+    transition:width .2s ease;
+
+    background:#f4f6f8;
+
+}
+
+body.detail-open .app{
+
+    width:calc(100vw - var(--detail-panel-width));
+
+}
+
+body.detail-open .tools-row{
+
+    flex-wrap:wrap;
+
+}
+
+body.detail-open .tools-row input{
+
+    flex:1 1 360px;
+
+}
+
+/* ==========================
+   FIXED AREA
+========================== */
+
+.fixed-area{
+
+    grid-column:1 / -1;
+
+    grid-row:1;
+
+    position:relative;
+
+    background:#ffffff;
+
+    padding:0 12px;
+
+    border-bottom:1px solid #d1d5db;
+
+    z-index:100;
+
+    display:grid;
+
+    grid-template-columns:auto minmax(220px,1fr) auto;
+
+    align-items:center;
+
+    gap:12px;
+
+}
+
+body.dark .fixed-area{
+
+    background:#1f2937;
+
+    border-color:#374151;
+
+}
+
+/* ==========================
+   TITLE AREA
+========================== */
+
+.title-area{
+
+    grid-column:1;
+
+    display:flex;
+
+    align-items:center;
+
+    gap:12px;
+
+}
+
+.app-icon{
+
+    width:34px;
+
+    height:34px;
+
+    object-fit:contain;
+
+}
+
+.title-area h1{
+
+    margin:0;
+
+    font-size:15px;
+
+}
+
+/* ==========================
+   HEADER
+========================== */
+
+.topbar{
+
+    display:contents;
+
+    justify-content:normal;
+
+    align-items:center;
+
+    flex-wrap:nowrap;
+
+    gap:0;
+
+    margin-bottom:0;
+
+}
+
+/* ==========================
+   BUTTONS
+========================== */
+
+.nav-buttons{
+
+    position:fixed;
+
+    top:68px;
+
+    left:12px;
+
+    width:226px;
+
+    max-height:230px;
+
+    padding:12px;
+
+    overflow:auto;
+
+    background:#eaf1ff;
+
+    border:1px solid #c7d2fe;
+
+    border-radius:12px;
+
+    box-shadow:0 10px 24px rgba(37,99,235,.08);
+
+    z-index:90;
+
+    display:flex;
+
+    flex-wrap:nowrap;
+
+    flex-direction:column;
+
+    gap:6px;
+
+}
+
+.nav-buttons button{
+
+    text-align:left;
+
+    background:rgba(255,255,255,.58);
+
+}
+
+.nav-buttons button:hover{
+
+    background:#ffffff;
+
+    border-color:#93c5fd;
+
+}
+
+.nav-buttons::before{
+
+    content:"Navigation";
+
+    color:#1e3a8a;
+
+    font-size:11px;
+
+    font-weight:bold;
+
+    text-transform:uppercase;
+
+    margin-bottom:4px;
+
+}
+
+button{
+
+    background:#ffffff;
+
+    color:#1e3a8a;
+
+    border:1px solid rgba(37,99,235,.12);
+
+    border-radius:6px;
+
+    padding:8px 12px;
+
+    cursor:pointer;
+
+    font-size:12px;
+
+    font-weight:bold;
+
+    display:inline-flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    gap:7px;
+
+}
+
+button:hover{
+
+    background:#eff6ff;
+
+}
+
+.button-icon{
+
+    width:15px;
+
+    height:15px;
+
+    flex:0 0 15px;
+
+    stroke:currentColor;
+
+    stroke-width:2;
+
+    stroke-linecap:round;
+
+    stroke-linejoin:round;
+
+    fill:none;
+
+}
+
+/* ==========================
+   SEARCH / SORT
+========================== */
+
+.tools-row{
+
+    grid-column:2;
+
+    display:flex;
+
+    gap:10px;
+
+    margin-bottom:0;
+
+}
+
+.tools-row input{
+
+    height:36px;
+
+    border:1px solid #d1d5db;
+
+    border-radius:8px;
+
+    padding:8px 10px;
+
+}
+
+.tools-row input{
+
+    flex:1;
+
+}
+
+.table-actions,
+.settings-actions{
+
+    display:flex;
+
+    flex-wrap:wrap;
+
+    align-items:center;
+
+    gap:10px;
+
+    margin-bottom:0;
+
+}
+
+.settings-actions input{
+
+    min-width:220px;
+
+    height:34px;
+
+    border:1px solid #d1d5db;
+
+    border-radius:6px;
+
+    padding:7px 9px;
+
+}
+
+.table-actions{
+
+    min-height:44px;
+
+    padding:0 12px;
+
+    border-bottom:1px solid #d9e0ea;
+
+}
+
+.table-actions::before{
+
+    content:"Operations Table";
+
+    margin-right:auto;
+
+    color:#172033;
+
+    font-size:14px;
+
+    font-weight:bold;
+
+}
+
+.table-actions button{
+
+    background:#ffffff;
+
+    border-color:#d9e0ea;
+
+    color:#1e3a8a;
+
+}
+
+.table-count,
+.kanban-count{
+
+    display:inline-flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    min-height:26px;
+
+    border:1px solid #d1d5db;
+
+    border-radius:999px;
+
+    background:#f9fafb;
+
+    color:#111827;
+
+    padding:4px 10px;
+
+    font-size:12px;
+
+    font-weight:bold;
+
+}
+
+body.dark .table-count,
+body.dark .kanban-count{
+
+    background:#111827;
+
+    border-color:#374151;
+
+    color:#f9fafb;
+
+}
+
+.table-filters{
+
+    flex-shrink:0;
+
+    display:grid;
+
+    grid-template-columns:
+    repeat(5,minmax(130px,1fr))
+    auto;
+
+    gap:8px;
+
+    margin:0;
+
+    padding:10px;
+
+    background:#ffffff;
+
+    border:none;
+
+    border-radius:0;
+
+    border-bottom:1px solid #d9e0ea;
+
+}
+
+body.dark .table-filters{
+
+    background:#1f2937;
+
+    border-color:#374151;
+
+}
+
+.table-filters select,
+.table-filters input{
+
+    width:100%;
+
+    height:34px;
+
+    border:1px solid #d1d5db;
+
+    border-radius:6px;
+
+    padding:7px 9px;
+
+}
+
+.table-filters button{
+
+    height:34px;
+
+}
+
+.special-panel{
+
+    width:100%;
+
+    max-width:1180px;
+
+    background:white;
+
+    border:1px solid #d1d5db;
+
+    border-radius:8px;
+
+    padding:16px;
+
+}
+
+.special-layout{
+
+    display:grid;
+
+    grid-template-columns:minmax(260px,.85fr) minmax(320px,1.15fr);
+
+    gap:14px;
+
+    align-items:start;
+
+}
+
+body.dark .special-panel{
+
+    background:#1f2937;
+
+    border-color:#374151;
+
+}
+
+.special-header{
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:space-between;
+
+    gap:12px;
+
+    margin-bottom:14px;
+
+}
+
+.special-header h2{
+
+    margin:0;
+
+}
+
+.special-form{
+
+    display:grid;
+
+    grid-template-columns:1fr;
+
+    gap:10px;
+
+    margin-bottom:16px;
+
+}
+
+.special-form input,
+.special-form textarea{
+
+    width:100%;
+
+    border:1px solid #d1d5db;
+
+    border-radius:6px;
+
+    padding:8px 10px;
+
+    font:inherit;
+
+}
+
+.special-form textarea{
+
+    min-height:110px;
+
+    resize:vertical;
+
+}
+
+.special-list{
+
+    display:grid;
+
+    gap:10px;
+
+}
+
+.special-card{
+
+    width:100%;
+
+    border:1px solid #e5e7eb;
+
+    border-left:4px solid #2563eb;
+
+    border-radius:8px;
+
+    background:#f9fafb;
+
+    padding:12px;
+
+    text-align:left;
+
+    color:inherit;
+
+    font:inherit;
+
+    cursor:pointer;
+
+}
+
+body.dark .special-card{
+
+    background:#111827;
+
+    border-color:#374151;
+
+    border-left-color:#2563eb;
+
+}
+
+.special-card:hover,
+.special-card:focus-visible{
+
+    border-color:#2563eb;
+
+    box-shadow:0 6px 16px rgba(37,99,235,.12);
+
+    outline:none;
+
+}
+
+.special-card h3{
+
+    margin:0 0 6px 0;
+
+}
+
+.special-card p{
+
+    margin:0;
+
+    white-space:pre-wrap;
+
+}
+
+.special-meta{
+
+    color:#6b7280;
+
+    font-size:12px;
+
+    margin-top:8px;
+
+}
+
+body.dark .special-meta{
+
+    color:#d1d5db;
+
+}
+
+.settings-panel{
+
+    width:100%;
+
+    max-width:1180px;
+
+    background:white;
+
+    border:1px solid #d1d5db;
+
+    border-radius:8px;
+
+    padding:16px;
+
+}
+
+body.dark .settings-panel{
+
+    background:#1f2937;
+
+    border-color:#374151;
+
+}
+
+.settings-panel h2{
+
+    margin:0 0 12px 0;
+
+}
+
+.settings-grid{
+
+    display:grid;
+
+    grid-template-columns:
+    repeat(
+        2,
+        minmax(260px,1fr)
+    );
+
+    gap:14px;
+
+}
+
+.settings-group{
+
+    border:1px solid #e5e7eb;
+
+    border-radius:8px;
+
+    padding:14px;
+
+}
+
+body.dark .settings-group{
+
+    border-color:#374151;
+
+}
+
+.settings-group h3{
+
+    margin:0 0 8px 0;
+
+}
+
+.settings-group.wide{
+
+    grid-column:1 / -1;
+
+}
+
+.settings-group.danger-zone{
+
+    background:#fff1f2;
+
+    border-color:#fca5a5;
+
+    box-shadow:inset 0 0 0 1px rgba(220,38,38,.1);
+
+}
+
+.settings-group.danger-zone h3{
+
+    color:#991b1b;
+
+    display:flex;
+
+    align-items:center;
+
+    gap:8px;
+
+}
+
+body.dark .settings-group.danger-zone{
+
+    background:#450a0a;
+
+    border-color:#991b1b;
+
+}
+
+body.dark .settings-group.danger-zone h3{
+
+    color:#fecaca;
+
+}
+
+.settings-caution{
+
+    margin:0 0 12px 0;
+
+    padding:12px 14px;
+
+    border:1px solid #facc15;
+
+    border-left:5px solid #ca8a04;
+
+    border-radius:8px;
+
+    background:#fefce8;
+
+    color:#713f12;
+
+    font-size:12px;
+
+    font-weight:700;
+
+    display:flex;
+
+    align-items:flex-start;
+
+    gap:10px;
+
+}
+
+.settings-caution .button-icon{
+
+    margin-top:1px;
+
+    color:#b45309;
+
+}
+
+body.dark .settings-caution{
+
+    background:#422006;
+
+    border-color:#854d0e;
+
+    border-left-color:#facc15;
+
+    color:#fef3c7;
+
+}
+
+body.dark .settings-caution .button-icon{
+
+    color:#facc15;
+
+}
+
+.status-settings-list{
+
+    display:grid;
+
+    grid-template-columns:
+    repeat(
+        auto-fit,
+        minmax(310px,1fr)
+    );
+
+    gap:10px;
+
+}
+
+.status-settings-row{
+
+    display:grid;
+
+    grid-template-columns:auto 1fr auto auto;
+
+    gap:6px;
+
+    align-items:center;
+
+    background:#f9fafb;
+
+    border:1px solid #e5e7eb;
+
+    border-radius:8px;
+
+    padding:6px;
+
+}
+
+body.dark .status-settings-row{
+
+    background:#111827;
+
+    border-color:#374151;
+
+}
+
+.status-settings-row.dragging{
+
+    opacity:.55;
+
+}
+
+.drag-handle{
+
+    width:30px;
+
+    height:30px;
+
+    display:inline-flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    border:1px solid #d1d5db;
+
+    border-radius:6px;
+
+    cursor:grab;
+
+    color:#64748b;
+
+    user-select:none;
+
+}
+
+.drag-handle:active{
+
+    cursor:grabbing;
+
+}
+
+.status-settings-row input[type="text"]{
+
+    width:100%;
+
+    height:34px;
+
+    border:1px solid #d1d5db;
+
+    border-radius:6px;
+
+    padding:7px 9px;
+
+}
+
+.status-final{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:6px;
+
+    white-space:nowrap;
+
+}
+
+.status-add-row{
+
+    display:flex;
+
+    gap:8px;
+
+    margin-top:10px;
+
+    max-width:520px;
+
+}
+
+.status-add-row input{
+
+    flex:1;
+
+    height:34px;
+
+    border:1px solid #d1d5db;
+
+    border-radius:6px;
+
+    padding:7px 9px;
+
+}
+
+/* ==========================
+   TASK FORM
+========================== */
+
+.add-task-form{
+
+    display:grid;
+
+    grid-template-columns:
+    repeat(2,minmax(0,1fr));
+
+    gap:12px;
+
+}
+
+.add-task-form input,
+.add-task-form select,
+.add-task-form textarea{
+
+    width:100%;
+
+    height:36px;
+
+    border:1px solid #d1d5db;
+
+    border-radius:6px;
+
+    padding:8px 10px;
+
+}
+
+.add-task-form textarea{
+
+    min-height:78px;
+
+    resize:vertical;
+
+    font-family:inherit;
+
+}
+
+.add-task-form .wide-field{
+
+    grid-column:1 / -1;
+
+}
+
+.add-task-actions{
+
+    grid-column:1 / -1;
+
+    display:flex;
+
+    justify-content:flex-end;
+
+    gap:10px;
+
+    padding-top:4px;
+
+}
+
+.form-field{
+
+    display:grid;
+
+    gap:4px;
+
+    min-width:0;
+
+}
+
+.form-field label{
+
+    color:#6b7280;
+
+    font-size:11px;
+
+    font-weight:bold;
+
+    line-height:1;
+
+}
+
+body.dark .form-field label{
+
+    color:#d1d5db;
+
+}
+
+/* ==========================
+   CONTENT AREA
+========================== */
+
+.content-area{
+
+    grid-column:2;
+
+    grid-row:2;
+
+    z-index:1;
+
+    overflow:hidden;
+
+    padding:12px;
+
+    position:relative;
+
+    min-width:0;
+
+    min-height:0;
+
+}
+
+/* ==========================
+   TABLE HEADER
+========================== */
+
+#tableView{
+
+    height:100%;
+
+    min-height:0;
+
+    overflow:hidden;
+
+    padding-top:0;
+
+    display:flex;
+
+    flex-direction:column;
+
+    background:#ffffff;
+
+    border:1px solid #d9e0ea;
+
+    border-radius:9px;
+
+}
+
+#tableView.hidden{
+
+    display:none;
+
+}
+
+.content-area > section:not(#tableView){
+
+    height:100%;
+
+    overflow:auto;
+
+}
+
+
+.table-header{
+
+    position:relative;
+
+    z-index:50;
+
+    flex-shrink:0;
+
+    display:grid;
+
+    grid-template-columns:
+    .55fr
+    1.75fr
+    1.25fr
+    1.25fr
+    1.35fr
+    1fr
+    1fr
+    .7fr
+    1fr;
+
+    background:#172033;
+
+    color:white;
+
+    font-weight:bold;
+
+    font-size:12px;
+
+    border-radius:0;
+
+    overflow:hidden;
+
+    margin-bottom:0;
+
+    box-shadow:
+    0 2px 4px rgba(0,0,0,.15);
+
+}
+
+.table-header div{
+
+    padding:9px;
+
+    border-right:
+    1px solid rgba(255,255,255,.2);
+
+}
+
+.table-header div:last-child{
+
+    border-right:none;
+
+}
+
+/* ==========================
+   TASK ROWS
+========================== */
+
+.task-rows{
+
+    position:relative;
+
+    z-index:0;
+
+    flex:1;
+
+    min-height:0;
+
+    overflow:auto;
+
+    display:flex;
+
+    flex-direction:column;
+
+}
+
+.task-row{
+
+    position:relative;
+
+    z-index:0;
+
+    display:grid;
+
+    grid-template-columns:
+    .55fr
+    1.75fr
+    1.25fr
+    1.25fr
+    1.35fr
+    1fr
+    1fr
+    .7fr
+    1fr;
+
+    background:white;
+
+    border-bottom:1px solid #edf1f6;
+
+    font-size:12px;
+
+}
+
+body.dark .task-row{
+
+    background:#1f2937;
+
+    border-color:#374151;
+
+}
+
+.task-row > div{
+
+    padding:7px;
+
+    min-width:0;
+
+    overflow:hidden;
+
+    text-overflow:ellipsis;
+
+    white-space:nowrap;
+
+}
+
+.task-link{
+
+    background:none;
+
+    border:none;
+
+    color:#2563eb;
+
+    cursor:pointer;
+
+    font:inherit;
+
+    font-weight:bold;
+
+    padding:0;
+
+    text-align:left;
+
+    text-decoration:underline;
+
+}
+
+.task-link:hover{
+
+    background:none;
+
+    color:#1d4ed8;
+
+}
+
+body.dark .task-link{
+
+    color:#93c5fd;
+
+}
+
+.task-id-link{
+
+    color:#1d4ed8;
+
+    font-weight:700;
+
+    text-decoration:none;
+
+}
+
+.task-id-link:hover{
+
+    text-decoration:underline;
+
+}
+
+body.dark .task-id-link{
+
+    color:#93c5fd;
+
+}
+
+.task-row input,
+.task-row select{
+
+    width:100%;
+
+    max-width:100%;
+
+    height:28px;
+
+    font-size:11px;
+
+}
+.task-row > div:nth-child(8){
+
+    display:flex;
+
+    align-items:center;
+
+}
+
+.detail-overlay{
+
+    display:none;
+
+}
+
+.detail-panel{
+
+    position:fixed;
+
+    top:0;
+
+    right:0;
+
+    z-index:500;
+
+    width:var(--detail-panel-width);
+
+    height:100vh;
+
+    background:white;
+
+    border-left:1px solid #d1d5db;
+
+    box-shadow:-12px 0 24px rgba(15,23,42,.18);
+
+    display:flex;
+
+    flex-direction:column;
+
+}
+
+body.dark .detail-panel{
+
+    background:#1f2937;
+
+    border-color:#374151;
+
+}
+
+.detail-header{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    gap:12px;
+
+    padding:16px;
+
+    border-bottom:1px solid #e5e7eb;
+
+}
+
+body.dark .detail-header{
+
+    border-color:#374151;
+
+}
+
+.detail-header h2{
+
+    margin:0;
+
+    font-size:18px;
+
+}
+
+.detail-body{
+
+    flex:1;
+
+    overflow:auto;
+
+    padding:16px;
+
+    display:grid;
+
+    gap:12px;
+
+}
+
+.detail-field{
+
+    display:grid;
+
+    gap:6px;
+
+}
+
+.detail-field label{
+
+    color:#6b7280;
+
+    font-size:12px;
+
+    font-weight:bold;
+
+}
+
+body.dark .detail-field label{
+
+    color:#d1d5db;
+
+}
+
+.detail-static{
+
+    border:1px solid #d1d5db;
+
+    border-radius:6px;
+
+    min-height:36px;
+
+    padding:8px 10px;
+
+    background:#f8fafc;
+
+}
+
+body.dark .detail-static{
+
+    background:#111827;
+
+    border-color:#374151;
+
+}
+
+.detail-field input,
+.detail-field select,
+.detail-field textarea{
+
+    width:100%;
+
+    border:1px solid #d1d5db;
+
+    border-radius:6px;
+
+    padding:8px 10px;
+
+    font:inherit;
+
+}
+
+.detail-field textarea{
+
+    min-height:120px;
+
+    resize:vertical;
+
+}
+
+.detail-field textarea.detail-title-input{
+
+    min-height:68px;
+
+    font-weight:bold;
+
+}
+
+.detail-field textarea.update-input{
+
+    min-height:82px;
+
+}
+
+.detail-field button{
+
+    justify-self:start;
+
+}
+
+.updates-summary{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    gap:10px;
+
+    border:1px solid #e5e7eb;
+
+    border-radius:8px;
+
+    padding:10px;
+
+    background:#f9fafb;
+
+}
+
+body.dark .updates-summary{
+
+    background:#111827;
+
+    border-color:#374151;
+
+}
+
+.updates-summary span{
+
+    color:#6b7280;
+
+    font-size:12px;
+
+}
+
+body.dark .updates-summary span{
+
+    color:#d1d5db;
+
+}
+
+.modal-overlay{
+
+    position:fixed;
+
+    inset:0;
+
+    z-index:900;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    padding:20px;
+
+    background:rgba(15,23,42,.42);
+
+}
+
+.modal{
+
+    width:min(720px,100%);
+
+    max-height:min(720px,92vh);
+
+    display:flex;
+
+    flex-direction:column;
+
+    background:white;
+
+    border:1px solid #d1d5db;
+
+    border-radius:8px;
+
+    box-shadow:0 24px 48px rgba(15,23,42,.28);
+
+}
+
+body.dark .modal{
+
+    background:#1f2937;
+
+    border-color:#374151;
+
+}
+
+.modal-header{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    gap:12px;
+
+    padding:14px 16px;
+
+    border-bottom:1px solid #e5e7eb;
+
+}
+
+body.dark .modal-header{
+
+    border-color:#374151;
+
+}
+
+.modal-header h2{
+
+    margin:0;
+
+    font-size:18px;
+
+}
+
+.modal-body{
+
+    overflow:auto;
+
+    padding:16px;
+
+    display:grid;
+
+    gap:14px;
+
+}
+
+.update-editor{
+
+    display:grid;
+
+    gap:8px;
+
+}
+
+.update-editor input,
+.update-editor textarea{
+
+    width:100%;
+
+    border:1px solid #d1d5db;
+
+    border-radius:6px;
+
+    padding:8px 10px;
+
+    font:inherit;
+
+}
+
+.update-editor textarea{
+
+    min-height:110px;
+
+    resize:vertical;
+
+}
+
+.update-editor-actions{
+
+    display:flex;
+
+    flex-wrap:wrap;
+
+    gap:8px;
+
+}
+
+.update-item-actions{
+
+    display:flex;
+
+    justify-content:flex-end;
+
+    margin-top:8px;
+
+}
+
+.task-updates{
+
+    display:grid;
+
+    gap:8px;
+
+}
+
+.task-updates > label{
+
+    color:#6b7280;
+
+    font-size:12px;
+
+    font-weight:bold;
+
+}
+
+body.dark .task-updates > label{
+
+    color:#d1d5db;
+
+}
+
+.update-item{
+
+    border:1px solid #e5e7eb;
+
+    border-radius:8px;
+
+    background:#f9fafb;
+
+    padding:10px;
+
+}
+
+body.dark .update-item{
+
+    background:#111827;
+
+    border-color:#374151;
+
+}
+
+.update-meta{
+
+    color:#6b7280;
+
+    font-size:11px;
+
+    margin-bottom:5px;
+
+}
+
+body.dark .update-meta{
+
+    color:#9ca3af;
+
+}
+
+.update-text,
+.empty-updates{
+
+    margin:0;
+
+    font-size:13px;
+
+    line-height:1.45;
+
+    white-space:pre-wrap;
+
+}
+
+.empty-updates{
+
+    color:#6b7280;
+
+}
+
+/* ==========================
+   PRIORITY BADGES
+========================== */
+
+.priority-badge{
+
+    display:inline-block;
+
+    padding:6px 10px;
+
+    border-radius:20px;
+
+    color:white;
+
+    font-size:11px;
+
+    font-weight:bold;
+
+}
+
+.priority-select{
+
+    border:none !important;
+
+    color:white;
+
+    font-weight:bold;
+
+    border-radius:999px !important;
+
+    padding:4px 28px 4px 10px !important;
+
+}
+
+.priority-select option{
+
+    background:white;
+
+    color:#111827;
+
+}
+
+.priority-low{
+
+    background:#16a34a;
+
+}
+
+.priority-medium{
+
+    background:#ea580c;
+
+}
+
+.priority-high{
+
+    background:#dc2626;
+
+}
+
+/* ==========================
+   DUE DATE ALERTS
+========================== */
+
+.overdue{
+
+    color:#dc2626;
+
+    font-weight:600;
+
+}
+
+.overdue .task-link,
+.overdue .task-id-link{
+
+    color:#dc2626;
+
+}
+
+.overdue input,
+.overdue select,
+.overdue textarea{
+
+    color:#111827;
+
+}
+
+.due-today{
+
+    background:#ffedd5 !important;
+
+}
+
+/* ==========================
+   DASHBOARD
+========================== */
+
+.dashboard-grid{
+
+    display:block;
+
+    margin-bottom:14px;
+
+}
+
+.dashboard-hero{
+
+    background:white;
+
+    border:1px solid #e5e7eb;
+
+    border-radius:8px;
+
+    padding:18px;
+
+    display:grid;
+
+    grid-template-columns:minmax(260px,1.2fr) minmax(320px,2fr);
+
+    gap:20px;
+
+    align-items:center;
+
+    box-shadow:0 2px 8px rgba(15,23,42,.06);
+
+}
+
+body.dark .dashboard-hero{
+
+    background:#1f2937;
+
+    border-color:#374151;
+
+}
+
+.dashboard-hero h2{
+
+    margin:0 0 6px 0;
+
+    font-size:22px;
+
+}
+
+.dashboard-hero p{
+
+    margin:0;
+
+    color:#6b7280;
+
+    line-height:1.45;
+
+}
+
+body.dark .dashboard-hero p{
+
+    color:#d1d5db;
+
+}
+
+.work-progress{
+
+    margin-top:16px;
+
+}
+
+.work-progress-header{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    gap:12px;
+
+    color:#374151;
+
+    font-size:12px;
+
+    font-weight:bold;
+
+    margin-bottom:7px;
+
+}
+
+body.dark .work-progress-header{
+
+    color:#d1d5db;
+
+}
+
+.work-progress-track{
+
+    height:10px;
+
+    background:#e5e7eb;
+
+    border-radius:999px;
+
+    overflow:hidden;
+
+}
+
+body.dark .work-progress-track{
+
+    background:#374151;
+
+}
+
+.work-progress-fill{
+
+    height:100%;
+
+    background:#16a34a;
+
+}
+
+.dashboard-metrics{
+
+    display:grid;
+
+    grid-template-columns:repeat(6,minmax(105px,1fr));
+
+    gap:10px;
+
+}
+
+.metric-tile.action{
+
+    cursor:pointer;
+
+    text-align:left;
+
+}
+
+.metric-tile.action:hover,
+.metric-tile.action:focus-visible{
+
+    border-color:#2563eb;
+
+    box-shadow:0 6px 16px rgba(37,99,235,.12);
+
+    outline:none;
+
+}
+
+.metric-tile{
+
+    border:1px solid #e5e7eb;
+
+    border-radius:8px;
+
+    padding:12px;
+
+    background:#f9fafb;
+
+}
+
+body.dark .metric-tile{
+
+    background:#111827;
+
+    border-color:#374151;
+
+}
+
+.metric-label{
+
+    color:#6b7280;
+
+    font-size:12px;
+
+    font-weight:bold;
+
+}
+
+body.dark .metric-label{
+
+    color:#d1d5db;
+
+}
+
+.metric-value{
+
+    display:block;
+
+    margin-top:6px;
+
+    font-size:24px;
+
+    font-weight:bold;
+
+}
+
+.dashboard-panels{
+
+    display:grid;
+
+    grid-template-columns:minmax(360px,1.2fr) minmax(280px,.8fr);
+
+    gap:14px;
+
+    align-items:stretch;
+
+}
+
+.stat-card{
+
+    background:white;
+
+    border-radius:8px;
+
+    padding:16px;
+
+    text-align:center;
+
+    box-shadow:
+    0 2px 4px rgba(0,0,0,.08);
+
+}
+
+body.dark .stat-card{
+
+    background:#1f2937;
+
+}
+
+.stat-card h3{
+
+    margin-top:0;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    gap:8px;
+
+}
+
+.stat-card span{
+
+    font-size:28px;
+
+    font-weight:bold;
+
+}
+
+.stat-icon{
+
+    display:inline-flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    position:relative;
+
+    width:28px;
+
+    min-width:28px;
+
+    height:28px;
+
+    border-radius:8px;
+
+    background:#dbeafe;
+
+    color:#1d4ed8;
+
+}
+
+body.dark .stat-icon{
+
+    background:#1e3a8a;
+
+    color:#bfdbfe;
+
+}
+
+.stat-icon::before,
+.stat-icon::after{
+
+    content:"";
+
+    position:absolute;
+
+}
+
+.stat-total::before{
+
+    width:5px;
+
+    height:5px;
+
+    background:currentColor;
+
+    border-radius:2px;
+
+    box-shadow:
+    8px 0 0 currentColor,
+    0 8px 0 currentColor,
+    8px 8px 0 currentColor;
+
+    transform:translate(-4px,-4px);
+
+}
+
+.stat-todo::before{
+
+    width:14px;
+
+    height:14px;
+
+    border:3px solid currentColor;
+
+    border-radius:50%;
+
+}
+
+.stat-progress::before{
+
+    width:16px;
+
+    height:4px;
+
+    background:currentColor;
+
+    border-radius:999px;
+
+    box-shadow:
+    0 -7px 0 currentColor,
+    0 7px 0 currentColor;
+
+}
+
+.stat-done::before{
+
+    width:14px;
+
+    height:8px;
+
+    border-left:3px solid currentColor;
+
+    border-bottom:3px solid currentColor;
+
+    transform:rotate(-45deg) translate(1px,-1px);
+
+}
+
+.stat-archived::before{
+
+    width:16px;
+
+    height:11px;
+
+    border:3px solid currentColor;
+
+    border-top-width:5px;
+
+    border-radius:3px;
+
+}
+
+.stat-archived::after{
+
+    width:8px;
+
+    height:2px;
+
+    background:currentColor;
+
+    border-radius:999px;
+
+    top:13px;
+
+}
+
+.stat-status::before{
+
+    width:12px;
+
+    height:12px;
+
+    border-radius:50%;
+
+    background:currentColor;
+
+}
+
+.status-to-do{
+
+    color:#64748b;
+
+}
+
+.status-in-progress{
+
+    color:#ea580c;
+
+}
+
+.status-waiting{
+
+    color:#0ea5e9;
+
+}
+
+.status-blocked{
+
+    color:#dc2626;
+
+}
+
+.status-review{
+
+    color:#7c3aed;
+
+}
+
+.status-approved{
+
+    color:#059669;
+
+}
+
+.status-done{
+
+    color:#16a34a;
+
+}
+
+.status-cancelled{
+
+    color:#6b7280;
+
+}
+
+/* ==========================
+   TABLES
+========================== */
+
+table{
+
+    width:100%;
+
+    border-collapse:collapse;
+
+    background:white;
+
+}
+
+body.dark table{
+
+    background:#1f2937;
+
+}
+
+th{
+
+    background:#2563eb;
+
+    color:white;
+
+    text-align:left;
+
+    padding:9px;
+
+}
+
+td{
+
+    border:1px solid #e5e7eb;
+
+    padding:8px;
+
+}
+
+/* ==========================
+   KANBAN
+========================== */
+
+.hidden{
+
+    display:none;
+
+}
+
+.kanban{
+
+    display:flex;
+
+    gap:10px;
+
+    overflow:auto;
+
+    padding:10px;
+
+    height:100%;
+
+    background:#ffffff;
+
+    border:1px solid #d9e0ea;
+
+    border-radius:9px;
+
+}
+
+.column{
+
+    flex:0 0 240px;
+
+    background:#f8fafc;
+
+    border:1px solid #d9e0ea;
+
+    border-radius:8px;
+
+    padding:15px;
+
+    height:560px;
+
+    display:flex;
+
+    flex-direction:column;
+
+    min-height:0;
+
+}
+
+body.dark .column{
+
+    background:#1f2937;
+
+}
+
+.column h2{
+
+    margin-top:0;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:space-between;
+
+    gap:8px;
+
+    text-align:left;
+
+    font-size:15px;
+
+}
+
+.column > div{
+
+    flex:1;
+
+    min-height:0;
+
+    overflow:auto;
+
+    padding-right:4px;
+
+}
+
+.card{
+
+    background:#f9fafb;
+
+    border-left:5px solid #2563eb;
+
+    border-top:1px solid #e5e7eb;
+
+    border-right:1px solid #e5e7eb;
+
+    border-bottom:1px solid #e5e7eb;
+
+    border-radius:6px;
+
+    padding:12px;
+
+    margin-bottom:12px;
+
+    display:block;
+
+    width:100%;
+
+    text-align:left;
+
+    color:inherit;
+
+    font:inherit;
+
+    cursor:pointer;
+
+}
+
+body.dark .card{
+
+    background:#111827;
+
+    border-top-color:#374151;
+
+    border-right-color:#374151;
+
+    border-bottom-color:#374151;
+
+}
+
+.card:hover,
+.card:focus-visible{
+
+    border-color:#2563eb;
+
+    box-shadow:0 6px 16px rgba(37,99,235,.14);
+
+    outline:none;
+
+}
+
+/* ==========================
+   REPORTS
+========================== */
+
+#reportContent{
+
+    background:transparent;
+
+    border:none;
+
+    border-radius:0;
+
+    padding:0;
+
+    line-height:1.5;
+
+    margin-top:0;
+
+}
+
+body.dark #reportContent{
+
+    background:transparent;
+
+}
+
+.report-header{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:flex-start;
+
+    gap:20px;
+
+    border-bottom:1px solid #e5e7eb;
+
+    padding-bottom:18px;
+
+    margin-bottom:20px;
+
+}
+
+body.dark .report-header{
+
+    border-color:#374151;
+
+}
+
+.report-header h2{
+
+    margin:0 0 6px 0;
+
+}
+
+.report-meta{
+
+    margin:0;
+
+    color:#6b7280;
+
+    font-size:14px;
+
+}
+
+body.dark .report-meta{
+
+    color:#d1d5db;
+
+}
+
+.report-section{
+
+    background:white;
+
+    border:1px solid #e5e7eb;
+
+    border-radius:8px;
+
+    padding:16px;
+
+    height:320px;
+
+    display:flex;
+
+    flex-direction:column;
+
+    min-width:0;
+
+}
+
+.report-section.compact{
+
+    gap:14px;
+
+}
+
+.report-block{
+
+    min-height:0;
+
+}
+
+.report-block h3{
+
+    margin:0 0 10px 0;
+
+    font-size:13px;
+
+}
+
+body.dark .report-section{
+
+    background:#1f2937;
+
+    border-color:#374151;
+
+}
+
+.report-section h3{
+
+    margin:0 0 12px 0;
+
+}
+
+.focus-list,
+.update-list,
+.status-list{
+
+    display:grid;
+
+    gap:8px;
+
+    overflow:auto;
+
+    padding-right:4px;
+
+}
+
+.report-section > .focus-list,
+.report-section > .update-list,
+.report-section > .status-list,
+.report-section > .status-row,
+.report-section > .report-empty{
+
+    min-height:0;
+
+}
+
+.report-section > .focus-list,
+.report-section > .update-list,
+.report-section > .status-list{
+
+    flex:1;
+
+}
+
+.report-section > .status-row:first-of-type{
+
+    margin-top:0;
+
+}
+
+.status-compact-list{
+
+    display:grid;
+
+    gap:6px;
+
+    max-height:132px;
+
+    overflow:auto;
+
+    padding-right:4px;
+
+}
+
+.status-compact-item{
+
+    display:grid;
+
+    grid-template-columns:1fr auto;
+
+    align-items:center;
+
+    gap:10px;
+
+    padding:8px 10px;
+
+    border-radius:8px;
+
+    background:#f8fafc;
+
+    font-size:12px;
+
+}
+
+body.dark .status-compact-item{
+
+    background:#111827;
+
+}
+
+.status-compact-item strong{
+
+    overflow:hidden;
+
+    text-overflow:ellipsis;
+
+    white-space:nowrap;
+
+}
+
+.status-compact-item span{
+
+    font-weight:bold;
+
+    color:#1d4ed8;
+
+}
+
+body.dark .status-compact-item span{
+
+    color:#93c5fd;
+
+}
+
+.recent-update-strip{
+
+    display:grid;
+
+    gap:8px;
+
+    max-height:128px;
+
+    overflow:auto;
+
+    padding-right:4px;
+
+}
+
+
+.focus-item{
+
+    width:100%;
+
+    display:grid;
+
+    gap:6px;
+
+    text-align:left;
+
+    background:#f9fafb;
+
+    border:1px solid #e5e7eb;
+
+    border-left:4px solid #2563eb;
+
+    border-radius:8px;
+
+    padding:10px;
+
+    color:inherit;
+
+    font:inherit;
+
+    cursor:pointer;
+
+}
+
+.focus-item:hover,
+.focus-item:focus-visible{
+
+    border-color:#2563eb;
+
+    box-shadow:0 6px 16px rgba(37,99,235,.12);
+
+    outline:none;
+
+}
+
+body.dark .focus-item{
+
+    background:#111827;
+
+    border-color:#374151;
+
+    border-left-color:#2563eb;
+
+}
+
+.focus-title{
+
+    font-weight:bold;
+
+}
+
+.focus-meta,
+.update-snippet{
+
+    color:#6b7280;
+
+    font-size:12px;
+
+}
+
+body.dark .focus-meta,
+body.dark .update-snippet{
+
+    color:#d1d5db;
+
+}
+
+.focus-tags{
+
+    display:flex;
+
+    flex-wrap:wrap;
+
+    gap:6px;
+
+}
+
+.work-chip{
+
+    display:inline-flex;
+
+    align-items:center;
+
+    border-radius:999px;
+
+    background:#e5e7eb;
+
+    color:#374151;
+
+    padding:3px 8px;
+
+    font-size:11px;
+
+    font-weight:bold;
+
+}
+
+body.dark .work-chip{
+
+    background:#374151;
+
+    color:#f9fafb;
+
+}
+
+.work-chip.alert{
+
+    background:#fee2e2;
+
+    color:#991b1b;
+
+}
+
+.work-chip.today{
+
+    background:#ffedd5;
+
+    color:#9a3412;
+
+}
+
+.work-chip.high{
+
+    background:#dbeafe;
+
+    color:#1d4ed8;
+
+}
+
+.update-card{
+
+    border:1px solid #e5e7eb;
+
+    border-radius:8px;
+
+    background:#f9fafb;
+
+    padding:10px;
+
+}
+
+body.dark .update-card{
+
+    background:#111827;
+
+    border-color:#374151;
+
+}
+
+.status-row{
+
+    display:grid;
+
+    grid-template-columns:120px 1fr 48px;
+
+    align-items:center;
+
+    gap:12px;
+
+    margin:10px 0;
+
+}
+
+.status-track{
+
+    height:10px;
+
+    background:#e5e7eb;
+
+    border-radius:999px;
+
+    overflow:hidden;
+
+}
+
+body.dark .status-track{
+
+    background:#374151;
+
+}
+
+.status-fill{
+
+    height:100%;
+
+    background:#2563eb;
+
+}
+
+.status-fill.todo{
+
+    background:#64748b;
+
+}
+
+.status-fill.to-do{
+
+    background:#64748b;
+
+}
+
+.status-fill.progress{
+
+    background:#ea580c;
+
+}
+
+.status-fill.in-progress{
+
+    background:#ea580c;
+
+}
+
+.status-fill.done{
+
+    background:#16a34a;
+
+}
+
+.status-fill.waiting{
+
+    background:#0ea5e9;
+
+}
+
+.status-fill.blocked{
+
+    background:#dc2626;
+
+}
+
+.status-fill.review{
+
+    background:#7c3aed;
+
+}
+
+.status-fill.approved{
+
+    background:#059669;
+
+}
+
+.status-fill.cancelled{
+
+    background:#6b7280;
+
+}
+
+.report-table-wrap{
+
+    overflow:auto;
+
+    border:1px solid #e5e7eb;
+
+    border-radius:8px;
+
+}
+
+body.dark .report-table-wrap{
+
+    border-color:#374151;
+
+}
+
+.report-table{
+
+    min-width:760px;
+
+}
+
+.report-table td,
+.report-table th{
+
+    vertical-align:top;
+
+}
+
+.report-empty{
+
+    margin:0;
+
+    padding:16px;
+
+    background:#f9fafb;
+
+    border:1px solid #e5e7eb;
+
+    border-radius:8px;
+
+}
+
+body.dark .report-empty{
+
+    background:#111827;
+
+    border-color:#374151;
+
+}
+
+/* ==========================
+   RESPONSIVE
+========================== */
+
+@media(max-width:1400px){
+
+    .table-filters{
+
+        grid-template-columns:repeat(3,minmax(130px,1fr));
+
+    }
+
+    .dashboard-hero{
+
+        grid-template-columns:1fr;
+
+    }
+
+    .add-task-form{
+
+        grid-template-columns:
+        1fr;
+
+    }
+
+    .add-task-form .wide-field,
+    .add-task-actions{
+
+        grid-column:auto;
+
+    }
+
+}
+
+@media(max-width:768px){
+
+    :root{
+
+        --detail-panel-width:100vw;
+
+    }
+
+    body.detail-open .app{
+
+        width:100vw;
+
+    }
+
+    body.detail-open .detail-overlay{
+
+        display:block;
+
+        position:fixed;
+
+        inset:0;
+
+        background:rgba(17,24,39,.28);
+
+        z-index:400;
+
+    }
+
+    .kanban{
+
+        flex-direction:column;
+
+    }
+
+    .dashboard-metrics,
+    .table-filters,
+    .special-layout,
+    .dashboard-panels{
+
+        grid-template-columns:1fr;
+
+    }
+
+    .tools-row{
+
+        flex-direction:column;
+
+    }
+
+    .settings-grid{
+
+        grid-template-columns:1fr;
+
+    }
+
+    .status-settings-list{
+
+        grid-template-columns:1fr;
+
+    }
+
+}
+
+
+
+
+
+
+
+</style>
+
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%3E%0A%20%20%3Cdefs%3E%0A%20%20%20%20%3ClinearGradient%20id%3D%22bg%22%20x1%3D%228%22%20y1%3D%226%22%20x2%3D%2256%22%20y2%3D%2258%22%20gradientUnits%3D%22userSpaceOnUse%22%3E%0A%20%20%20%20%20%20%3Cstop%20stop-color%3D%22%232563eb%22%2F%3E%0A%20%20%20%20%20%20%3Cstop%20offset%3D%221%22%20stop-color%3D%22%230f766e%22%2F%3E%0A%20%20%20%20%3C%2FlinearGradient%3E%0A%20%20%20%20%3ClinearGradient%20id%3D%22card%22%20x1%3D%2218%22%20y1%3D%2213%22%20x2%3D%2246%22%20y2%3D%2252%22%20gradientUnits%3D%22userSpaceOnUse%22%3E%0A%20%20%20%20%20%20%3Cstop%20stop-color%3D%22%23ffffff%22%2F%3E%0A%20%20%20%20%20%20%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23dbeafe%22%2F%3E%0A%20%20%20%20%3C%2FlinearGradient%3E%0A%20%20%3C%2Fdefs%3E%0A%20%20%3Crect%20width%3D%2264%22%20height%3D%2264%22%20rx%3D%2215%22%20fill%3D%22url(%23bg)%22%2F%3E%0A%20%20%3Cpath%20d%3D%22M17%2018.5C17%2015.5%2019.5%2013%2022.5%2013h19C44.5%2013%2047%2015.5%2047%2018.5v29C47%2050.5%2044.5%2053%2041.5%2053h-19C19.5%2053%2017%2050.5%2017%2047.5v-29Z%22%20fill%3D%22url(%23card)%22%2F%3E%0A%20%20%3Cpath%20d%3D%22M24%2013h16v6H24z%22%20fill%3D%22%23172554%22%20opacity%3D%22.95%22%2F%3E%0A%20%20%3Cpath%20d%3D%22M25%2028l5%205%2010-11%22%20fill%3D%22none%22%20stroke%3D%22%2316a34a%22%20stroke-width%3D%225%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%2F%3E%0A%20%20%3Cpath%20d%3D%22M24%2040h17%22%20stroke%3D%22%231e3a8a%22%20stroke-width%3D%224%22%20stroke-linecap%3D%22round%22%2F%3E%0A%20%20%3Cpath%20d%3D%22M24%2047h11%22%20stroke%3D%22%230f766e%22%20stroke-width%3D%224%22%20stroke-linecap%3D%22round%22%2F%3E%0A%20%20%3Ccircle%20cx%3D%2246%22%20cy%3D%2217%22%20r%3D%226%22%20fill%3D%22%23facc15%22%20stroke%3D%22%23fff%22%20stroke-width%3D%222%22%2F%3E%0A%3C%2Fsvg%3E">
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+</head>
+
+<body>
+
+<svg
+width="0"
+height="0"
+style="position:absolute"
+aria-hidden="true"
+focusable="false">
+    <symbol id="icon-dashboard" viewBox="0 0 24 24">
+        <rect x="3" y="3" width="7" height="8" rx="1.5"></rect>
+        <rect x="14" y="3" width="7" height="5" rx="1.5"></rect>
+        <rect x="14" y="12" width="7" height="9" rx="1.5"></rect>
+        <rect x="3" y="15" width="7" height="6" rx="1.5"></rect>
+    </symbol>
+    <symbol id="icon-table" viewBox="0 0 24 24">
+        <rect x="3" y="4" width="18" height="16" rx="2"></rect>
+        <path d="M3 10h18M9 4v16M15 4v16"></path>
+    </symbol>
+    <symbol id="icon-kanban" viewBox="0 0 24 24">
+        <rect x="3" y="4" width="5" height="16" rx="1.5"></rect>
+        <rect x="10" y="4" width="5" height="10" rx="1.5"></rect>
+        <rect x="17" y="4" width="4" height="13" rx="1.5"></rect>
+    </symbol>
+    <symbol id="icon-archive" viewBox="0 0 24 24">
+        <path d="M4 7h16v13H4z"></path>
+        <path d="M3 4h18v3H3zM9 11h6"></path>
+    </symbol>
+    <symbol id="icon-settings" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="3"></circle>
+        <path d="M19.4 15a8 8 0 0 0 .1-2l2-1.5-2-3.5-2.4 1a7 7 0 0 0-1.7-1L15 5h-6l-.4 3a7 7 0 0 0-1.7 1l-2.4-1-2 3.5 2 1.5a8 8 0 0 0 .1 2l-2 1.5 2 3.5 2.4-1a7 7 0 0 0 1.7 1L9 23h6l.4-3a7 7 0 0 0 1.7-1l2.4 1 2-3.5z"></path>
+    </symbol>
+    <symbol id="icon-plus" viewBox="0 0 24 24">
+        <path d="M12 5v14M5 12h14"></path>
+    </symbol>
+    <symbol id="icon-download" viewBox="0 0 24 24">
+        <path d="M12 3v12"></path>
+        <path d="m7 10 5 5 5-5"></path>
+        <path d="M5 21h14"></path>
+    </symbol>
+    <symbol id="icon-clear" viewBox="0 0 24 24">
+        <path d="M4 7h16"></path>
+        <path d="M9 7V5h6v2"></path>
+        <path d="M6 7l1 14h10l1-14"></path>
+        <path d="M10 11v6M14 11v6"></path>
+    </symbol>
+    <symbol id="icon-back" viewBox="0 0 24 24">
+        <path d="M15 18 9 12l6-6"></path>
+        <path d="M9 12h12"></path>
+    </symbol>
+    <symbol id="icon-warning" viewBox="0 0 24 24">
+        <path d="M12 3 2.5 20.5h19L12 3z"></path>
+        <path d="M12 9v5"></path>
+        <path d="M12 18h.01"></path>
+    </symbol>
+</svg>
+
+<div class="app">
+
+    <!-- FIXED AREA -->
+
+    <div class="fixed-area">
+
+        <header class="topbar">
+
+            <div class="title-area">
+
+                <img
+                src="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%3E%0A%20%20%3Cdefs%3E%0A%20%20%20%20%3ClinearGradient%20id%3D%22bg%22%20x1%3D%228%22%20y1%3D%226%22%20x2%3D%2256%22%20y2%3D%2258%22%20gradientUnits%3D%22userSpaceOnUse%22%3E%0A%20%20%20%20%20%20%3Cstop%20stop-color%3D%22%232563eb%22%2F%3E%0A%20%20%20%20%20%20%3Cstop%20offset%3D%221%22%20stop-color%3D%22%230f766e%22%2F%3E%0A%20%20%20%20%3C%2FlinearGradient%3E%0A%20%20%20%20%3ClinearGradient%20id%3D%22card%22%20x1%3D%2218%22%20y1%3D%2213%22%20x2%3D%2246%22%20y2%3D%2252%22%20gradientUnits%3D%22userSpaceOnUse%22%3E%0A%20%20%20%20%20%20%3Cstop%20stop-color%3D%22%23ffffff%22%2F%3E%0A%20%20%20%20%20%20%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23dbeafe%22%2F%3E%0A%20%20%20%20%3C%2FlinearGradient%3E%0A%20%20%3C%2Fdefs%3E%0A%20%20%3Crect%20width%3D%2264%22%20height%3D%2264%22%20rx%3D%2215%22%20fill%3D%22url(%23bg)%22%2F%3E%0A%20%20%3Cpath%20d%3D%22M17%2018.5C17%2015.5%2019.5%2013%2022.5%2013h19C44.5%2013%2047%2015.5%2047%2018.5v29C47%2050.5%2044.5%2053%2041.5%2053h-19C19.5%2053%2017%2050.5%2017%2047.5v-29Z%22%20fill%3D%22url(%23card)%22%2F%3E%0A%20%20%3Cpath%20d%3D%22M24%2013h16v6H24z%22%20fill%3D%22%23172554%22%20opacity%3D%22.95%22%2F%3E%0A%20%20%3Cpath%20d%3D%22M25%2028l5%205%2010-11%22%20fill%3D%22none%22%20stroke%3D%22%2316a34a%22%20stroke-width%3D%225%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%2F%3E%0A%20%20%3Cpath%20d%3D%22M24%2040h17%22%20stroke%3D%22%231e3a8a%22%20stroke-width%3D%224%22%20stroke-linecap%3D%22round%22%2F%3E%0A%20%20%3Cpath%20d%3D%22M24%2047h11%22%20stroke%3D%22%230f766e%22%20stroke-width%3D%224%22%20stroke-linecap%3D%22round%22%2F%3E%0A%20%20%3Ccircle%20cx%3D%2246%22%20cy%3D%2217%22%20r%3D%226%22%20fill%3D%22%23facc15%22%20stroke%3D%22%23fff%22%20stroke-width%3D%222%22%2F%3E%0A%3C%2Fsvg%3E"
+                class="app-icon"
+                alt="Administrative Tasks Hub">
+
+                <h1>
+                    Administrative Tasks Hub
+                </h1>
+
+            </div>
+
+            <div class="nav-buttons">
+
+                <button onclick="showDashboardView()">
+                    <svg class="button-icon"><use href="#icon-dashboard"></use></svg>
+                    Dashboard
+                </button>
+
+                <button onclick="showTableView()">
+                    <svg class="button-icon"><use href="#icon-table"></use></svg>
+                    Table
+                </button>
+
+                <button onclick="showKanbanView()">
+                    <svg class="button-icon"><use href="#icon-kanban"></use></svg>
+                    Kanban
+                </button>
+
+                <button onclick="showArchiveView()">
+                    <svg class="button-icon"><use href="#icon-archive"></use></svg>
+                    Archive
+                </button>
+
+                <button onclick="showSettingsView()">
+                    <svg class="button-icon"><use href="#icon-settings"></use></svg>
+                    Settings
+                </button>
+
+            </div>
+
+        </header>
+
+        <!-- SEARCH / SORT -->
+
+        <div class="tools-row">
+
+            <input
+            id="searchBox"
+            placeholder="Search tasks...">
+
+            <button onclick="openAddTaskPopup()">
+                <svg class="button-icon"><use href="#icon-plus"></use></svg>
+                Add Task
+            </button>
+
+        </div>
+
+    </div>
+
+    <!-- CONTENT AREA -->
+
+    <div class="content-area">
+
+        <!-- DASHBOARD -->
+
+        <section
+        id="dashboardView"
+        class="hidden">
+
+            <div
+            id="dashboardStats"
+            class="dashboard-grid">
+
+            </div>
+
+            <div id="reportContent">
+
+            </div>
+
+        </section>
+
+        <!-- TABLE VIEW -->
+
+        <section id="tableView">
+
+            <div class="table-actions">
+
+                <button onclick="downloadTableExcel()">
+                    <svg class="button-icon"><use href="#icon-download"></use></svg>
+                    Download Excel
+                </button>
+
+                <span
+                id="tableTaskCounter"
+                class="table-count">
+                    0 tasks
+                </span>
+
+            </div>
+
+            <div class="table-filters">
+
+                <select
+                id="filterCategory"
+                onchange="renderTasks()">
+                    <option value="">
+                        All Categories
+                    </option>
+                </select>
+
+                <select
+                id="filterProject"
+                onchange="renderTasks()">
+                    <option value="">
+                        All Projects
+                    </option>
+                </select>
+
+                <select
+                id="sortBy"
+                onchange="renderTasks()">
+
+                    <option value="">
+                        Sort By
+                    </option>
+
+                    <option value="task">
+                        Task Name
+                    </option>
+
+                    <option value="priority">
+                        Priority
+                    </option>
+
+                    <option value="due">
+                        Due Date
+                    </option>
+
+                    <option value="assignee">
+                        Assignee
+                    </option>
+
+                    <option value="status">
+                        Status
+                    </option>
+
+                </select>
+
+                <select
+                id="filterPriority"
+                onchange="renderTasks()">
+                    <option value="">
+                        All Priorities
+                    </option>
+                    <option value="High">
+                        High
+                    </option>
+                    <option value="Medium">
+                        Medium
+                    </option>
+                    <option value="Low">
+                        Low
+                    </option>
+                </select>
+
+                <select
+                id="filterStatus"
+                onchange="renderTasks()">
+                    <option value="">
+                        All Statuses
+                    </option>
+                </select>
+
+                <button onclick="clearTableFilters()">
+                    <svg class="button-icon"><use href="#icon-clear"></use></svg>
+                    Clear
+                </button>
+
+            </div>
+
+            <div
+            id="tableHeader"
+            class="table-header">
+
+                <div>Task ID</div>
+
+                <div>Task</div>
+
+                <div>Assignee</div>
+
+                <div>Category</div>
+
+                <div>Project</div>
+
+                <div>Started</div>
+
+                <div>Due</div>
+
+                <div>Priority</div>
+
+                <div>Status</div>
+
+            </div>
+
+            <div
+            id="taskRows"
+            class="task-rows">
+
+            </div>
+
+        </section>
+
+        <!-- KANBAN -->
+
+        <section
+        id="kanbanView"
+        class="hidden">
+
+            <div
+            id="kanbanBoard"
+            class="kanban">
+
+            </div>
+
+        </section>
+
+        <!-- ARCHIVE -->
+
+        <section
+        id="archiveView"
+        class="hidden">
+
+            <h2>
+                Archived Tasks
+            </h2>
+
+            <table>
+
+                <thead>
+
+                    <tr>
+
+                        <th>Task</th>
+
+                        <th>Assignee</th>
+
+                        <th>Project</th>
+
+                        <th>Status</th>
+
+                        <th>Restore</th>
+
+                        <th>Delete</th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody id="archiveBody">
+
+                </tbody>
+
+            </table>
+
+        </section>
+
+        <!-- SPECIAL TASKS -->
+
+        <section
+        id="specialView"
+        class="hidden">
+
+            <div class="special-panel">
+
+                <div class="special-header">
+                    <h2>
+                        Special Tasks & Instructions
+                    </h2>
+
+                    <button onclick="showTableView()">
+                        <svg class="button-icon"><use href="#icon-back"></use></svg>
+                        Back to Regular Tasks
+                    </button>
+                </div>
+
+                <div class="special-layout">
+
+                    <div class="report-section">
+                        <h3>
+                            Add Instruction
+                        </h3>
+
+                        <div class="special-form">
+                            <input
+                            id="specialTitle"
+                            placeholder="Instruction or special task title">
+
+                            <textarea
+                            id="specialInstruction"
+                            placeholder="Write the instruction, special handling note, or reminder here"></textarea>
+
+                            <button onclick="addSpecialTask()">
+                                Add Special Task
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="report-section">
+                        <h3>
+                            Special Task List
+                        </h3>
+
+                        <div
+                        id="specialList"
+                        class="special-list">
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- SETTINGS -->
+
+        <section
+        id="settingsView"
+        class="hidden">
+
+            <div class="settings-panel">
+
+                <h2>
+                    Settings
+                </h2>
+
+                <div class="settings-grid">
+
+                <div class="settings-group">
+
+                    <h3>
+                        Appearance
+                    </h3>
+
+                    <div class="settings-actions">
+
+                        <button onclick="toggleDarkMode()">
+                            Toggle Dark Mode
+                        </button>
+
+                    </div>
+
+                </div>
+
+                <div class="settings-group wide">
+
+                    <h3>
+                        Statuses
+                    </h3>
+
+                    <div
+                    id="statusSettingsRows"
+                    class="status-settings-list">
+
+                    </div>
+
+                    <div class="status-add-row">
+
+                        <input
+                        id="newStatusName"
+                        placeholder="New status name">
+
+                        <button onclick="addStatus()">
+                            Add Status
+                        </button>
+
+                    </div>
+
+                </div>
+
+                <div class="settings-group">
+
+                    <h3>
+                        Data
+                    </h3>
+
+                    <div class="settings-actions">
+
+                        <button onclick="exportToCSV()">
+                            Export CSV
+                        </button>
+
+                    </div>
+
+                </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </div>
+
+</div>
+
+<div
+id="taskDetailOverlay"
+class="detail-overlay hidden"
+onclick="closeTaskDetails()">
+</div>
+
+<aside
+id="taskDetailPanel"
+class="detail-panel hidden"
+aria-label="Task details">
+</aside>
+
+<div
+id="updatesModalOverlay"
+class="modal-overlay hidden"
+onclick="closeUpdatesPopup()">
+    <div
+    id="updatesModal"
+    class="modal"
+    onclick="event.stopPropagation()"
+    aria-label="Task updates">
+    </div>
+</div>
+
+<div
+id="addTaskModalOverlay"
+class="modal-overlay hidden"
+onclick="closeAddTaskPopup()">
+    <div
+    class="modal"
+    onclick="event.stopPropagation()"
+    aria-label="Add task">
+
+        <div class="modal-header">
+            <h2>Add Task</h2>
+            <button onclick="closeAddTaskPopup()">
+                Close
+            </button>
+        </div>
+
+        <div class="modal-body">
+
+            <section class="add-task-form">
+
+                <input
+                id="taskIdInput"
+                placeholder="Task ID">
+
+                <input
+                id="taskName"
+                placeholder="Task Name">
+
+                <input
+                id="assignee"
+                placeholder="Assignee">
+
+                <input
+                id="department"
+                list="categorySuggestions"
+                placeholder="Category">
+
+                <datalist id="categorySuggestions">
+                </datalist>
+
+                <input
+                id="project"
+                list="projectSuggestions"
+                placeholder="Project">
+
+                <datalist id="projectSuggestions">
+                </datalist>
+
+                <select id="priority">
+
+                    <option value="Low">
+                        Low
+                    </option>
+
+                    <option
+                    value="Medium"
+                    selected>
+                        Medium
+                    </option>
+
+                    <option value="High">
+                        High
+                    </option>
+
+                </select>
+
+                <textarea
+                id="description"
+                class="wide-field"
+                placeholder="Description"></textarea>
+
+                <div class="form-field">
+                    <label for="dateStarted">
+                        Start Date
+                    </label>
+                    <input
+                    id="dateStarted"
+                    type="date">
+                </div>
+
+                <div class="form-field">
+                    <label for="dueDate">
+                        Due Date
+                    </label>
+                    <input
+                    id="dueDate"
+                    type="date">
+                </div>
+
+                <div class="add-task-actions">
+                    <button
+                    class="secondary"
+                    onclick="closeAddTaskPopup()">
+                        Cancel
+                    </button>
+
+                    <button onclick="addTask()">
+                        Add Task
+                    </button>
+                </div>
+
+            </section>
+
+        </div>
+
+    </div>
+</div>
+
+<div
+id="specialModalOverlay"
+class="modal-overlay hidden"
+onclick="closeSpecialPopup()">
+    <div
+    id="specialModal"
+    class="modal"
+    onclick="event.stopPropagation()"
+    aria-label="Special task details">
+    </div>
+</div>
+
+<script>
+/* =====================================
+   TASK MANAGER V7
+   PART 1
+===================================== */
+
+const sampleTasks = [
+
+    {
+        id: 1001,
+        taskName: "Prepare weekly operations report",
+        assignee: "Maria Santos",
+        department: "Operations",
+        project: "Weekly Reporting",
+        dateStarted: "2026-06-22",
+        dueDate: "2026-06-29",
+        priority: "High",
+        status: "In Progress",
+        archived: false
+    },
+
+    {
+        id: 1002,
+        taskName: "Update client contact list",
+        assignee: "James Lee",
+        department: "Sales",
+        project: "CRM Cleanup",
+        dateStarted: "2026-06-20",
+        dueDate: "2026-07-03",
+        priority: "Medium",
+        status: "To Do",
+        archived: false
+    },
+
+    {
+        id: 1003,
+        taskName: "Review supplier invoice batch",
+        assignee: "Aisha Patel",
+        department: "Finance",
+        project: "Month-End Close",
+        dateStarted: "2026-06-24",
+        dueDate: "2026-06-27",
+        priority: "High",
+        status: "In Progress",
+        archived: false
+    },
+
+    {
+        id: 1004,
+        taskName: "Draft onboarding checklist",
+        assignee: "Noah Williams",
+        department: "Human Resources",
+        project: "New Hire Process",
+        dateStarted: "2026-06-18",
+        dueDate: "2026-07-05",
+        priority: "Low",
+        status: "To Do",
+        archived: false
+    },
+
+    {
+        id: 1005,
+        taskName: "Archive completed maintenance tickets",
+        assignee: "Lena Cruz",
+        department: "Facilities",
+        project: "Maintenance Tracking",
+        dateStarted: "2026-06-10",
+        dueDate: "2026-06-21",
+        priority: "Medium",
+        status: "Done",
+        archived: true
+    }
+
+];
+
+function loadInitialTasks(){
+
+    const resetSampleData =
+    new URLSearchParams(
+        window.location.search
+    ).get(
+        "resetData"
+    ) === "sample";
+
+    if(resetSampleData){
+
+        localStorage.removeItem(
+            "tasks"
+        );
+
+        window.history.replaceState(
+            null,
+            "",
+            window.location.pathname
+        );
+
+    }
+
+    const savedTasks =
+    localStorage.getItem(
+        "tasks"
+    );
+
+    if(savedTasks){
+
+        return JSON.parse(
+            savedTasks
+        );
+
+    }
+
+    localStorage.setItem(
+        "tasks",
+        JSON.stringify(sampleTasks)
+    );
+
+    return sampleTasks;
+
+}
+
+let tasks = normalizeTasks(
+    loadInitialTasks()
+);
+let darkMode =
+localStorage.getItem(
+"darkMode"
+) === "true";
+
+let selectedTasks = [];
+
+let specialTasks =
+loadSpecialTasks();
+
+function normalizeTasks(taskList){
+
+    return taskList.map(task => ({
+
+        ...task,
+
+        description:
+        task.description || "",
+
+        lastUpdatedAt:
+        task.lastUpdatedAt || "",
+
+        updates:
+        Array.isArray(task.updates)
+        ? task.updates
+        : []
+
+    }));
+
+}
+
+function getTaskById(id){
+
+    return tasks.find(task =>
+        String(task.id) === String(id)
+    );
+
+}
+
+function getTaskActionId(task){
+
+    return `'${String(task.id)
+        .replace(/\\/g,"\\\\")
+        .replace(/'/g,"\\'")
+        .replace(/\r/g,"\\r")
+        .replace(/\n/g,"\\n")}'`;
+
+}
+
+function getTaskDisplayId(task){
+
+    return String(
+        task.buildiumTaskId
+        || task.id
+        || ""
+    ).trim();
+
+}
+
+function getBuildiumTaskUrl(task){
+
+    const existingUrl =
+    task.buildiumTaskUrl
+    || task.buildiumUrl
+    || "";
+
+    if(existingUrl){
+
+        return existingUrl.includes(
+            "/task-summary"
+        )
+        ? existingUrl
+        : `${existingUrl.replace(/\/$/,"")}/task-summary`;
+
+    }
+
+    const taskId =
+    getTaskDisplayId(task);
+
+    if(!taskId){
+
+        return "";
+
+    }
+
+    const isBuildiumTask =
+    task.source === "buildium"
+    || task.buildiumTaskId
+    || /^\d{1,12}$/.test(taskId);
+
+    if(!isBuildiumTask){
+
+        return "";
+
+    }
+
+    return `https://savannaimpalallc.managebuilding.com/manager/app/tasks/${encodeURIComponent(taskId)}/task-summary`;
+
+}
+
+function getTaskIdLinkHtml(task){
+
+    const taskId =
+    getTaskDisplayId(task);
+
+    if(!taskId){
+
+        return "-";
+
+    }
+
+    const buildiumUrl =
+    getBuildiumTaskUrl(task);
+
+    if(!buildiumUrl){
+
+        return escapeHtml(taskId);
+
+    }
+
+    return `
+        <a
+        class="task-id-link"
+        href="${escapeHtml(buildiumUrl)}"
+        target="_blank"
+        rel="noopener noreferrer"
+        title="Open Buildium task">
+            ${escapeHtml(taskId)}
+        </a>
+    `;
+
+}
+
+function loadSpecialTasks(){
+
+    const saved =
+    localStorage.getItem(
+        "specialTasks"
+    );
+
+    if(saved){
+
+        try{
+
+            const parsed =
+            JSON.parse(saved);
+
+            if(Array.isArray(parsed)){
+
+                return parsed;
+
+            }
+
+        }
+        catch(error){
+
+            localStorage.removeItem(
+                "specialTasks"
+            );
+
+        }
+
+    }
+
+    return [];
+
+}
+
+const defaultStatusOptions = [
+
+    "To Do",
+    "In Progress",
+    "Waiting",
+    "Blocked",
+    "Review",
+    "Approved",
+    "Done",
+    "Cancelled"
+
+];
+
+const defaultArchivedStatuses = [
+
+    "Done",
+    "Cancelled"
+
+];
+
+let statusOptions = loadStatusOptions();
+let archivedStatuses = loadArchivedStatuses();
+
+const supabaseConfigKeys = {
+    url:"supabaseUrl",
+    anonKey:"supabaseAnonKey"
+};
+
+const defaultSupabaseUrl =
+"https://toqfdhzlavkwjeukdtpg.supabase.co";
+
+const defaultSupabaseAnonKey =
+"sb_publishable_fnjbFqunKe_XtswLrTh23g_SduXNxD-";
+
+let supabaseClient = null;
+
+let cloudSyncEnabled = false;
+
+let cloudSyncTimer = null;
+
+let isLoadingCloudState = false;
+
+function getAppState(){
+
+    return {
+        tasks,
+        specialTasks,
+        statusOptions,
+        archivedStatuses,
+        updatedAt:new Date().toISOString()
+    };
+
+}
+
+function applyAppState(state){
+
+    if(!state) return;
+
+    tasks =
+    normalizeTasks(
+        Array.isArray(state.tasks)
+        ? state.tasks
+        : []
+    );
+
+    specialTasks =
+    Array.isArray(state.specialTasks)
+    ? state.specialTasks
+    : [];
+
+    statusOptions =
+    Array.isArray(state.statusOptions)
+    &&
+    state.statusOptions.length
+    ? state.statusOptions
+    : [...defaultStatusOptions];
+
+    archivedStatuses =
+    Array.isArray(state.archivedStatuses)
+    ? state.archivedStatuses.filter(status =>
+        statusOptions.includes(status)
+    )
+    : defaultArchivedStatuses.filter(status =>
+        statusOptions.includes(status)
+    );
+
+    saveLocalStateOnly();
+
+    renderAll();
+
+}
+
+function saveLocalStateOnly(){
+
+    localStorage.setItem(
+        "tasks",
+        JSON.stringify(tasks)
+    );
+
+    localStorage.setItem(
+        "specialTasks",
+        JSON.stringify(specialTasks)
+    );
+
+    localStorage.setItem(
+        "statusOptions",
+        JSON.stringify(statusOptions)
+    );
+
+    localStorage.setItem(
+        "archivedStatuses",
+        JSON.stringify(archivedStatuses)
+    );
+
+}
+
+function setCloudStatus(message){
+
+    const status =
+    document.getElementById(
+        "cloudStatus"
+    );
+
+    if(status){
+
+        status.textContent = message;
+
+    }
+
+}
+
+function initSupabaseClient(){
+
+    const url =
+    localStorage.getItem(
+        supabaseConfigKeys.url
+    )
+    ||
+    defaultSupabaseUrl;
+
+    const anonKey =
+    localStorage.getItem(
+        supabaseConfigKeys.anonKey
+    )
+    ||
+    defaultSupabaseAnonKey;
+
+    const urlInput =
+    document.getElementById(
+        "supabaseUrl"
+    );
+
+    const keyInput =
+    document.getElementById(
+        "supabaseAnonKey"
+    );
+
+    if(urlInput) urlInput.value = url || "";
+
+    if(keyInput) keyInput.value = anonKey || "";
+
+    if(!url || !anonKey || !window.supabase){
+
+        cloudSyncEnabled = false;
+
+        setCloudStatus(
+            "Shared database is not connected."
+        );
+
+        return null;
+
+    }
+
+    supabaseClient =
+    window.supabase.createClient(
+        url,
+        anonKey
+    );
+
+    cloudSyncEnabled = true;
+
+    setCloudStatus(
+        "Shared database connected automatically."
+    );
+
+    return supabaseClient;
+
+}
+
+function saveSupabaseSettings(){
+
+    const url =
+    document.getElementById(
+        "supabaseUrl"
+    )
+    ?.value.trim();
+
+    const anonKey =
+    document.getElementById(
+        "supabaseAnonKey"
+    )
+    ?.value.trim();
+
+    if(!url || !anonKey){
+
+        alert(
+            "Enter the Supabase Project URL and anon public key."
+        );
+
+        return;
+
+    }
+
+    localStorage.setItem(
+        supabaseConfigKeys.url,
+        url
+    );
+
+    localStorage.setItem(
+        supabaseConfigKeys.anonKey,
+        anonKey
+    );
+
+    initSupabaseClient();
+
+    syncFromCloud();
+
+}
+
+function scheduleCloudSync(){
+
+    if(!cloudSyncEnabled || isLoadingCloudState) return;
+
+    clearTimeout(
+        cloudSyncTimer
+    );
+
+    cloudSyncTimer =
+    setTimeout(() => {
+
+        syncCloudState();
+
+    },700);
+
+}
+
+async function syncCloudState(){
+
+    const client =
+    supabaseClient || initSupabaseClient();
+
+    if(!client) return;
+
+    setCloudStatus(
+        "Saving shared database..."
+    );
+
+    const { error } =
+    await client
+    .from("task_management_state")
+    .upsert({
+        id:1,
+        state:getAppState(),
+        updated_at:new Date().toISOString()
+    });
+
+    if(error){
+
+        setCloudStatus(
+            `Shared save failed: ${error.message}`
+        );
+
+        return;
+
+    }
+
+    setCloudStatus(
+        "Shared database saved."
+    );
+
+}
+
+async function syncFromCloud(){
+
+    const client =
+    supabaseClient || initSupabaseClient();
+
+    if(!client) return;
+
+    setCloudStatus(
+        "Loading shared database..."
+    );
+
+    isLoadingCloudState = true;
+
+    const { data, error } =
+    await client
+    .from("task_management_state")
+    .select("state")
+    .eq("id",1)
+    .maybeSingle();
+
+    isLoadingCloudState = false;
+
+    if(error){
+
+        setCloudStatus(
+            `Shared load failed: ${error.message}`
+        );
+
+        return;
+
+    }
+
+    if(!data?.state){
+
+        await syncCloudState();
+
+        setCloudStatus(
+            "Shared database created from this app."
+        );
+
+        return;
+
+    }
+
+    applyAppState(
+        data.state
+    );
+
+    openDeepLinkedTask();
+
+    setCloudStatus(
+        "Shared database loaded."
+    );
+
+}
+
+function openDeepLinkedTask(){
+
+    if(window.__unifiedDeepLinkOpened) return;
+
+    const record =
+    new URLSearchParams(
+        window.location.search
+    ).get("record");
+
+    if(!record) return;
+
+    const task =
+    tasks.find(item =>
+        String(item.id) === String(record) ||
+        String(item.buildiumTaskId || "") === String(record)
+    );
+
+    if(task){
+
+        window.__unifiedDeepLinkOpened = true;
+
+        openTaskDetails(
+            task.id
+        );
+
+    }
+
+}
+
+function loadStatusOptions(){
+
+    const saved =
+    localStorage.getItem(
+        "statusOptions"
+    );
+
+    if(saved){
+
+        try{
+
+            const parsed =
+            JSON.parse(saved);
+
+            if(Array.isArray(parsed) && parsed.length){
+
+                return parsed;
+
+            }
+
+        }
+        catch(error){
+
+            localStorage.removeItem(
+                "statusOptions"
+            );
+
+        }
+
+    }
+
+    return [...defaultStatusOptions];
+
+}
+
+function loadArchivedStatuses(){
+
+    const saved =
+    localStorage.getItem(
+        "archivedStatuses"
+    );
+
+    if(saved){
+
+        try{
+
+            const parsed =
+            JSON.parse(saved);
+
+            if(Array.isArray(parsed)){
+
+                return parsed
+                .filter(status =>
+                    statusOptions.includes(status)
+                );
+
+            }
+
+        }
+        catch(error){
+
+            localStorage.removeItem(
+                "archivedStatuses"
+            );
+
+        }
+
+    }
+
+    return defaultArchivedStatuses
+    .filter(status =>
+        statusOptions.includes(status)
+    );
+
+}
+
+function saveStatusSettings(){
+
+    saveLocalStateOnly();
+
+    scheduleCloudSync();
+
+}
+
+function getActiveKanbanStatuses(){
+
+    return statusOptions;
+
+}
+
+function getDashboardStats(){
+
+    const activeTasks =
+    tasks.filter(task => !task.archived);
+
+    const completedTasks =
+    tasks.filter(task => task.archived);
+
+    const overdueTasks =
+    activeTasks.filter(task =>
+        getDueClass(task.dueDate) === "overdue"
+    );
+
+    const dueTodayTasks =
+    activeTasks.filter(task =>
+        getDueClass(task.dueDate) === "due-today"
+    );
+
+    const highPriorityTasks =
+    activeTasks.filter(task =>
+        task.priority === "High"
+    );
+
+    const progress =
+    Math.round(
+        completedTasks.length
+        /
+        Math.max(tasks.length, 1)
+        *
+        100
+    );
+
+    return {
+
+        total:tasks.length,
+
+        active:activeTasks.length,
+
+        completed:completedTasks.length,
+
+        overdue:overdueTasks.length,
+
+        dueToday:dueTodayTasks.length,
+
+        highPriority:highPriorityTasks.length,
+
+        progress
+
+    };
+
+}
+
+function isArchivedStatus(status){
+
+    return archivedStatuses.includes(
+        status
+    );
+
+}
+
+function getStatusClass(status){
+
+    return (status || "")
+    .toLowerCase()
+    .replace(
+        /[^a-z0-9]+/g,
+        "-"
+    )
+    .replace(
+        /^-|$/g,
+        ""
+    );
+
+}
+
+function getStatusOptionsHtml(currentStatus){
+
+    const options =
+    statusOptions.includes(currentStatus)
+    ||
+    !currentStatus
+    ?
+    statusOptions
+    :
+    [
+        ...statusOptions,
+        currentStatus
+    ];
+
+    return options
+    .map(status => `
+
+        <option
+        value="${status}"
+        ${currentStatus===status?"selected":""}>
+            ${status}
+        </option>
+
+    `)
+    .join("");
+
+}
+
+function getPriorityOptionsHtml(currentPriority){
+
+    return ["Low","Medium","High"]
+    .map(priority => `
+
+        <option
+        value="${priority}"
+        ${currentPriority===priority?"selected":""}>
+            ${priority}
+        </option>
+
+    `)
+    .join("");
+
+}
+
+function getUniqueTaskValues(field){
+
+    return [
+        ...new Set(
+            tasks
+            .filter(task =>
+                !task.archived
+                &&
+                !isStarterSampleTask(task)
+            )
+            .map(task => task[field] || "")
+            .filter(value => String(value).trim() !== "")
+        )
+    ]
+    .sort((a,b) =>
+        String(a).localeCompare(String(b))
+    );
+
+}
+
+function isStarterSampleTask(task){
+
+    return [
+        1001,
+        1002,
+        1003,
+        1004,
+        1005
+    ].includes(Number(task.id));
+
+}
+
+function renderTableFilters(){
+
+    const categories =
+    getUniqueTaskValues("department");
+
+    populateFilterSelect(
+        "filterCategory",
+        categories,
+        "All Categories"
+    );
+
+    populateCategorySuggestions(
+        categories
+    );
+
+    const projects =
+    getUniqueTaskValues("project");
+
+    populateFilterSelect(
+        "filterProject",
+        projects,
+        "All Projects"
+    );
+
+    populateProjectSuggestions(
+        projects
+    );
+
+    populateFilterSelect(
+        "filterStatus",
+        statusOptions,
+        "All Statuses"
+    );
+
+}
+
+function populateCategorySuggestions(categories){
+
+    const list =
+    document.getElementById(
+        "categorySuggestions"
+    );
+
+    if(!list) return;
+
+    list.innerHTML =
+    categories
+    .map(category => `
+        <option value="${escapeHtml(category)}"></option>
+    `)
+    .join("");
+
+}
+
+function populateProjectSuggestions(projects){
+
+    const list =
+    document.getElementById(
+        "projectSuggestions"
+    );
+
+    if(!list) return;
+
+    list.innerHTML =
+    projects
+    .map(project => `
+        <option value="${escapeHtml(project)}"></option>
+    `)
+    .join("");
+
+}
+
+function populateFilterSelect(id,options,emptyLabel){
+
+    const select =
+    document.getElementById(id);
+
+    if(!select) return;
+
+    const currentValue =
+    select.value;
+
+    select.innerHTML =
+    `
+        <option value="">
+            ${emptyLabel}
+        </option>
+        ${
+            options
+            .map(option => `
+                <option
+                value="${escapeHtml(option)}"
+                ${currentValue === option ? "selected" : ""}>
+                    ${escapeHtml(option)}
+                </option>
+            `)
+            .join("")
+        }
+    `;
+
+}
+
+function getFilterValue(id){
+
+    return document
+    .getElementById(id)
+    ?.value
+    || "";
+
+}
+
+function clearTableFilters(){
+
+    [
+        "filterCategory",
+        "filterProject",
+        "sortBy",
+        "filterPriority",
+        "filterStatus"
+    ].forEach(id => {
+
+        const input =
+        document.getElementById(id);
+
+        if(input){
+
+            input.value = "";
+
+        }
+
+    });
+
+    renderTasks();
+
+}
+
+/* =====================================
+   STORAGE
+===================================== */
+
+function saveTasks(){
+
+    saveLocalStateOnly();
+
+    scheduleCloudSync();
+
+}
+
+function saveSpecialTasks(){
+
+    saveLocalStateOnly();
+
+    scheduleCloudSync();
+
+}
+
+function saveDarkMode(){
+
+    localStorage.setItem(
+        "darkMode",
+        darkMode
+    );
+
+}
+
+/* =====================================
+   DARK MODE
+===================================== */
+
+function applyDarkMode(){
+
+    if(darkMode){
+
+        document.body.classList.add(
+            "dark"
+        );
+
+    }
+    else{
+
+        document.body.classList.remove(
+            "dark"
+        );
+
+    }
+
+}
+
+function toggleDarkMode(){
+
+    darkMode = !darkMode;
+
+    saveDarkMode();
+
+    applyDarkMode();
+
+}
+
+/* =====================================
+   ADD TASK
+===================================== */
+
+function openAddTaskPopup(){
+
+    const overlay =
+    document.getElementById(
+        "addTaskModalOverlay"
+    );
+
+    if(!overlay) return;
+
+    overlay.classList.remove(
+        "hidden"
+    );
+
+    const taskNameInput =
+    document.getElementById(
+        "taskName"
+    );
+
+    if(taskNameInput){
+
+        taskNameInput.focus();
+
+    }
+
+}
+
+function closeAddTaskPopup(){
+
+    const overlay =
+    document.getElementById(
+        "addTaskModalOverlay"
+    );
+
+    if(!overlay) return;
+
+    overlay.classList.add(
+        "hidden"
+    );
+
+}
+
+function addTask(){
+
+    const taskIdInput =
+    document.getElementById(
+        "taskIdInput"
+    ).value.trim();
+
+    const taskName =
+    document.getElementById(
+        "taskName"
+    ).value.trim();
+
+    if(taskName === ""){
+
+        alert(
+            "Task name is required."
+        );
+
+        return;
+
+    }
+
+    tasks.push({
+
+        id:
+        taskIdInput || Date.now(),
+
+        buildiumTaskId:
+        taskIdInput,
+
+        taskName,
+
+        assignee:
+        document.getElementById(
+            "assignee"
+        ).value,
+
+        department:
+        document.getElementById(
+            "department"
+        ).value.trim(),
+
+        project:
+        document.getElementById(
+            "project"
+        ).value.trim(),
+
+        description:
+        document.getElementById(
+            "description"
+        ).value,
+
+        dateStarted:
+        document.getElementById(
+            "dateStarted"
+        ).value,
+
+        dueDate:
+        document.getElementById(
+            "dueDate"
+        ).value,
+
+        priority:
+        document.getElementById(
+            "priority"
+        ).value,
+
+        updates:[],
+
+        status:"To Do",
+
+        archived:false
+
+    });
+
+    saveTasks();
+
+    clearForm();
+
+    closeAddTaskPopup();
+
+    renderAll();
+
+}
+
+/* =====================================
+   CLEAR FORM
+===================================== */
+
+function clearForm(){
+
+    document.getElementById(
+        "taskIdInput"
+    ).value = "";
+
+    document.getElementById(
+        "taskName"
+    ).value = "";
+
+    document.getElementById(
+        "assignee"
+    ).value = "";
+
+    document.getElementById(
+        "department"
+    ).value = "";
+
+    document.getElementById(
+        "project"
+    ).value = "";
+
+    document.getElementById(
+        "description"
+    ).value = "";
+
+    document.getElementById(
+        "dateStarted"
+    ).value = "";
+
+    document.getElementById(
+        "dueDate"
+    ).value = "";
+
+    document.getElementById(
+        "priority"
+    ).value = "Medium";
+
+}
+
+/* =====================================
+   TASK UPDATE FUNCTIONS
+===================================== */
+
+function updateTaskName(
+id,
+value
+){
+
+    const task =
+    getTaskById(id);
+
+    if(!task) return;
+
+    const cleanedValue =
+    value.trim();
+
+    if(cleanedValue === ""){
+
+        alert(
+            "Task name is required."
+        );
+
+        renderTasks();
+
+        return;
+
+    }
+
+    task.taskName = cleanedValue;
+
+    saveTasks();
+
+    renderAll();
+
+}
+
+function updateAssignee(
+id,
+value
+){
+
+    const task =
+    getTaskById(id);
+
+    if(!task) return;
+
+    task.assignee = value;
+
+    saveTasks();
+
+    renderAll();
+
+}
+
+function updateStatus(
+id,
+value
+){
+
+    const task =
+    getTaskById(id);
+
+    if(!task) return;
+
+    task.status = value;
+
+    /* AUTO ARCHIVE FINAL STATES */
+
+    if(isArchivedStatus(value)){
+
+        task.archived = true;
+
+    }
+    else{
+
+        task.archived = false;
+
+    }
+
+    saveTasks();
+
+    renderAll();
+
+}
+
+function updatePriority(
+id,
+value
+){
+
+    const task =
+    getTaskById(id);
+
+    if(!task) return;
+
+    task.priority = value;
+
+    saveTasks();
+
+    renderTasks();
+
+}
+
+function updateDateStarted(
+id,
+value
+){
+
+    const task =
+    getTaskById(id);
+
+    if(!task) return;
+
+    task.dateStarted = value;
+
+    saveTasks();
+
+}
+
+function updateDueDate(
+id,
+value
+){
+
+    const task =
+    getTaskById(id);
+
+    if(!task) return;
+
+    task.dueDate = value;
+
+    saveTasks();
+
+    renderTasks();
+
+}
+
+function updateDepartment(
+id,
+value
+){
+
+    const task =
+    getTaskById(id);
+
+    if(!task) return;
+
+    task.department = value;
+
+    saveTasks();
+
+}
+
+function updateProject(
+id,
+value
+){
+
+    const task =
+    getTaskById(id);
+
+    if(!task) return;
+
+    task.project = value;
+
+    saveTasks();
+
+}
+
+function openTaskDetails(id){
+
+    const task =
+    getTaskById(id);
+
+    if(!task) return;
+
+    const panel =
+    document.getElementById(
+        "taskDetailPanel"
+    );
+
+    const overlay =
+    document.getElementById(
+        "taskDetailOverlay"
+    );
+
+    const updateCount =
+    Array.isArray(task.updates)
+    ? task.updates.length
+    : 0;
+
+    const lastUpdateDate =
+    getTaskLastUpdateDate(task);
+
+    const taskActionId =
+    getTaskActionId(task);
+
+    panel.innerHTML = `
+
+        <div class="detail-header">
+            <h2>Task Details</h2>
+            <button onclick="closeTaskDetails()">Close</button>
+        </div>
+
+        <div class="detail-body">
+
+            <div class="detail-field">
+                <label>Task ID</label>
+                <div class="detail-static">
+                    ${getTaskIdLinkHtml(task)}
+                </div>
+            </div>
+
+            <div class="detail-field">
+                <label>Task Name</label>
+                <textarea
+                class="detail-title-input"
+                oninput="updateTaskDetail(${taskActionId}, 'taskName', this.value)">${escapeHtml(task.taskName || "")}</textarea>
+            </div>
+
+            <div class="detail-field">
+                <label>Assignee</label>
+                <input
+                value="${escapeHtml(task.assignee || "")}"
+                oninput="updateTaskDetail(${taskActionId}, 'assignee', this.value)">
+            </div>
+
+            <div class="detail-field">
+                <label>Category</label>
+                <input
+                value="${escapeHtml(task.department || "")}"
+                oninput="updateTaskDetail(${taskActionId}, 'department', this.value)">
+            </div>
+
+            <div class="detail-field">
+                <label>Project</label>
+                <input
+                value="${escapeHtml(task.project || "")}"
+                oninput="updateTaskDetail(${taskActionId}, 'project', this.value)">
+            </div>
+
+            <div class="detail-field">
+                <label>Description</label>
+                <textarea oninput="updateTaskDetail(${taskActionId}, 'description', this.value)">${escapeHtml(task.description || "")}</textarea>
+            </div>
+
+            <div class="detail-field">
+                <label>Date Started</label>
+                <input
+                type="date"
+                value="${escapeHtml(task.dateStarted || "")}"
+                onchange="updateTaskDetail(${taskActionId}, 'dateStarted', this.value)">
+            </div>
+
+            <div class="detail-field">
+                <label>Due Date</label>
+                <input
+                type="date"
+                value="${escapeHtml(task.dueDate || "")}"
+                onchange="updateTaskDetail(${taskActionId}, 'dueDate', this.value)">
+            </div>
+
+            <div class="detail-field">
+                <label>Priority</label>
+                <select onchange="updateTaskDetail(${taskActionId}, 'priority', this.value)">
+                    ${getPriorityOptionsHtml(task.priority)}
+                </select>
+            </div>
+
+            <div class="detail-field">
+                <label>Status</label>
+                <select onchange="updateTaskDetail(${taskActionId}, 'status', this.value)">
+                    ${getStatusOptionsHtml(task.status)}
+                </select>
+            </div>
+
+            <div class="detail-field">
+                <label>Updates</label>
+                <div class="updates-summary">
+                    <span>
+                        ${updateCount}
+                        ${updateCount === 1 ? "update" : "updates"}
+                        ${
+                            lastUpdateDate
+                            ? ` - Last: ${escapeHtml(formatUpdateDate(lastUpdateDate))}`
+                            : ""
+                        }
+                    </span>
+                    <button onclick="openUpdatesPopup(${taskActionId})">
+                        Open Updates
+                    </button>
+                </div>
+            </div>
+
+            <div class="detail-field">
+                <button onclick="archiveTask(${taskActionId})">
+                    Archive Task
+                </button>
+            </div>
+
+        </div>
+
+    `;
+
+    overlay.classList.remove(
+        "hidden"
+    );
+
+    panel.classList.remove(
+        "hidden"
+    );
+
+    document.body.classList.add(
+        "detail-open"
+    );
+
+}
+
+function closeTaskDetails(){
+
+    document
+    .getElementById(
+        "taskDetailOverlay"
+    )
+    .classList.add(
+        "hidden"
+    );
+
+    document
+    .getElementById(
+        "taskDetailPanel"
+    )
+    .classList.add(
+        "hidden"
+    );
+
+    document.body.classList.remove(
+        "detail-open"
+    );
+
+    closeUpdatesPopup();
+
+}
+
+function updateTaskDetail(id,field,value){
+
+    const task =
+    getTaskById(id);
+
+    if(!task) return;
+
+    if(field === "taskName"){
+
+        const cleanedValue =
+        value.trim();
+
+        if(cleanedValue === ""){
+
+            return;
+
+        }
+
+        task.taskName = cleanedValue;
+
+    }
+    else{
+
+        task[field] = value;
+
+    }
+
+    if(field === "status"){
+
+        task.archived =
+        isArchivedStatus(value);
+
+    }
+
+    saveTasks();
+
+    renderAll();
+
+}
+
+function addTaskUpdate(id){
+
+    const task =
+    getTaskById(id);
+
+    const updateInput =
+    document.getElementById(
+        "popupTaskUpdateText"
+    );
+
+    const updateDateInput =
+    document.getElementById(
+        "popupTaskUpdateDate"
+    );
+
+    if(!task || !updateInput || !updateDateInput) return;
+
+    const text =
+    updateInput.value.trim();
+
+    const editId =
+    updateInput.dataset.editId;
+
+    const updateDate =
+    updateDateInput.value
+    ? new Date(`${updateDateInput.value}T12:00:00`).toISOString()
+    : new Date().toISOString();
+
+    if(text === ""){
+
+        return;
+
+    }
+
+    if(!Array.isArray(task.updates)){
+
+        task.updates = [];
+
+    }
+
+    if(editId){
+
+        const update =
+        task.updates.find(item =>
+            String(item.id) === editId
+        );
+
+        if(update){
+
+            update.text = text;
+
+            update.createdAt =
+            updateDate;
+
+            update.editedAt =
+            new Date().toISOString();
+
+        }
+
+        delete updateInput.dataset.editId;
+
+    }
+    else{
+
+        task.updates.unshift({
+
+            id: Date.now(),
+
+            text,
+
+            createdAt:
+            updateDate
+
+        });
+
+    }
+
+    saveTasks();
+
+    renderAll();
+
+    openTaskDetails(id);
+
+    openUpdatesPopup(id);
+
+}
+
+function openUpdatesPopup(id){
+
+    const task =
+    getTaskById(id);
+
+    if(!task) return;
+
+    if(!Array.isArray(task.updates)){
+
+        task.updates = [];
+
+    }
+
+    const modal =
+    document.getElementById(
+        "updatesModal"
+    );
+
+    const overlay =
+    document.getElementById(
+        "updatesModalOverlay"
+    );
+
+    if(!modal || !overlay) return;
+
+    const updateItems =
+    task.updates
+    .map(update => `
+
+        <div class="update-item">
+            <div class="update-meta">
+                ${escapeHtml(formatUpdateDate(update.createdAt))}
+                ${
+                    update.editedAt
+                    ? ` - Edited ${escapeHtml(formatUpdateDate(update.editedAt))}`
+                    : ""
+                }
+            </div>
+            <p class="update-text">${escapeHtml(update.text || "")}</p>
+            <div class="update-item-actions">
+                <button onclick="startEditTaskUpdate(${getTaskActionId(task)}, ${update.id})">
+                    Edit
+                </button>
+            </div>
+        </div>
+
+    `)
+    .join("");
+
+    modal.innerHTML = `
+
+        <div class="modal-header">
+            <h2>Task Updates</h2>
+            <button onclick="closeUpdatesPopup()">Close</button>
+        </div>
+
+        <div class="modal-body">
+
+            <div class="update-editor">
+                <label for="popupTaskUpdateDate">
+                    Update Date
+                </label>
+                <input
+                id="popupTaskUpdateDate"
+                type="date"
+                value="${escapeHtml(toDateInputValue(new Date().toISOString()))}">
+
+                <label for="popupTaskUpdateText">
+                    Add or Edit Update
+                </label>
+                <textarea
+                id="popupTaskUpdateText"
+                placeholder="Write an update for this task"></textarea>
+                <div class="update-editor-actions">
+                    <button onclick="addTaskUpdate(${getTaskActionId(task)})">
+                        Save Update
+                    </button>
+                    <button onclick="clearUpdateEditor()">
+                        Clear
+                    </button>
+                </div>
+            </div>
+
+            <div class="task-updates">
+                <label>
+                    Update History
+                </label>
+                ${
+                    updateItems ||
+                    `<p class="empty-updates">No updates yet.</p>`
+                }
+            </div>
+
+        </div>
+
+    `;
+
+    overlay.classList.remove(
+        "hidden"
+    );
+
+}
+
+function closeUpdatesPopup(){
+
+    document
+    .getElementById(
+        "updatesModalOverlay"
+    )
+    ?.classList.add(
+        "hidden"
+    );
+
+}
+
+function startEditTaskUpdate(taskId,updateId){
+
+    const task =
+    getTaskById(taskId);
+
+    if(!task || !Array.isArray(task.updates)) return;
+
+    const update =
+    task.updates.find(item =>
+        item.id === updateId
+    );
+
+    const updateInput =
+    document.getElementById(
+        "popupTaskUpdateText"
+    );
+
+    const updateDateInput =
+    document.getElementById(
+        "popupTaskUpdateDate"
+    );
+
+    if(!update || !updateInput || !updateDateInput) return;
+
+    updateInput.value =
+    update.text || "";
+
+    updateDateInput.value =
+    toDateInputValue(update.createdAt);
+
+    updateInput.dataset.editId =
+    String(update.id);
+
+    updateInput.focus();
+
+}
+
+function clearUpdateEditor(){
+
+    const updateInput =
+    document.getElementById(
+        "popupTaskUpdateText"
+    );
+
+    const updateDateInput =
+    document.getElementById(
+        "popupTaskUpdateDate"
+    );
+
+    if(!updateInput || !updateDateInput) return;
+
+    updateInput.value = "";
+
+    updateDateInput.value =
+    toDateInputValue(new Date().toISOString());
+
+    delete updateInput.dataset.editId;
+
+    updateInput.focus();
+
+}
+
+function formatUpdateDate(value){
+
+    if(!value){
+
+        return "Just now";
+
+    }
+
+    const date =
+    new Date(value);
+
+    if(Number.isNaN(date.getTime())){
+
+        return value;
+
+    }
+
+    return date.toLocaleString();
+
+}
+
+function toDateInputValue(value){
+
+    if(!value){
+
+        return new Date().toISOString().slice(0,10);
+
+    }
+
+    const date =
+    new Date(value);
+
+    if(Number.isNaN(date.getTime())){
+
+        return new Date().toISOString().slice(0,10);
+
+    }
+
+    return date.toISOString().slice(0,10);
+
+}
+
+function getTaskLastUpdateDate(task){
+
+    const updates =
+    Array.isArray(task.updates)
+    ? task.updates
+    : [];
+
+    const latestUpdate =
+    updates
+    .filter(update =>
+        update.createdAt
+    )
+    .sort((a,b) =>
+        new Date(b.createdAt || 0)
+        -
+        new Date(a.createdAt || 0)
+    )[0];
+
+    return latestUpdate?.createdAt || task.lastUpdatedAt || "";
+
+}
+
+function syncTaskArchiveStates(){
+
+    tasks.forEach(task => {
+
+        task.archived =
+        isArchivedStatus(
+            task.status
+        );
+
+    });
+
+}
+
+function renderStatusSettings(){
+
+    const rows =
+    document.getElementById(
+        "statusSettingsRows"
+    );
+
+    if(!rows) return;
+
+    rows.innerHTML =
+    statusOptions
+    .map((status,index) => `
+
+        <div
+        class="status-settings-row"
+        draggable="true"
+        ondragstart="startStatusDrag(event, ${index})"
+        ondragover="allowStatusDrop(event)"
+        ondrop="dropStatus(event, ${index})"
+        ondragend="endStatusDrag(event)">
+
+            <span
+            class="drag-handle"
+            title="Drag to reorder">
+                ::
+            </span>
+
+            <input
+            type="text"
+            value="${escapeHtml(status)}"
+            onchange="renameStatus(${index}, this.value)">
+
+            <label class="status-final">
+                <input
+                type="checkbox"
+                ${isArchivedStatus(status) ? "checked" : ""}
+                onchange="toggleFinalStatus(${index}, this.checked)">
+                Final
+            </label>
+
+            <button onclick="deleteStatus(${index})">
+                Delete
+            </button>
+
+        </div>
+
+    `)
+    .join("");
+
+}
+
+let draggedStatusIndex = null;
+
+function startStatusDrag(event,index){
+
+    draggedStatusIndex = index;
+
+    event.currentTarget.classList.add(
+        "dragging"
+    );
+
+    event.dataTransfer.effectAllowed =
+    "move";
+
+}
+
+function allowStatusDrop(event){
+
+    event.preventDefault();
+
+    event.dataTransfer.dropEffect =
+    "move";
+
+}
+
+function dropStatus(event,targetIndex){
+
+    event.preventDefault();
+
+    if(
+        draggedStatusIndex === null
+        ||
+        draggedStatusIndex === targetIndex
+    ){
+
+        return;
+
+    }
+
+    const movedStatus =
+    statusOptions.splice(
+        draggedStatusIndex,
+        1
+    )[0];
+
+    statusOptions.splice(
+        targetIndex,
+        0,
+        movedStatus
+    );
+
+    draggedStatusIndex = null;
+
+    saveStatusSettings();
+
+    renderAll();
+
+}
+
+function endStatusDrag(event){
+
+    event.currentTarget.classList.remove(
+        "dragging"
+    );
+
+    draggedStatusIndex = null;
+
+}
+
+function addStatus(){
+
+    const input =
+    document.getElementById(
+        "newStatusName"
+    );
+
+    const status =
+    input.value.trim();
+
+    if(status === ""){
+
+        alert(
+            "Enter a status name."
+        );
+
+        return;
+
+    }
+
+    if(statusOptions.includes(status)){
+
+        alert(
+            "That status already exists."
+        );
+
+        return;
+
+    }
+
+    statusOptions.push(status);
+
+    input.value = "";
+
+    saveStatusSettings();
+
+    renderAll();
+
+}
+
+function renameStatus(index,value){
+
+    const oldStatus =
+    statusOptions[index];
+
+    const newStatus =
+    value.trim();
+
+    if(!oldStatus) return;
+
+    if(newStatus === ""){
+
+        alert(
+            "Status name cannot be blank."
+        );
+
+        renderStatusSettings();
+
+        return;
+
+    }
+
+    if(
+        statusOptions.includes(newStatus)
+        &&
+        newStatus !== oldStatus
+    ){
+
+        alert(
+            "That status already exists."
+        );
+
+        renderStatusSettings();
+
+        return;
+
+    }
+
+    statusOptions[index] = newStatus;
+
+    tasks.forEach(task => {
+
+        if(task.status === oldStatus){
+
+            task.status = newStatus;
+
+        }
+
+    });
+
+    archivedStatuses =
+    archivedStatuses.map(status =>
+        status === oldStatus
+        ?
+        newStatus
+        :
+        status
+    );
+
+    saveStatusSettings();
+
+    saveTasks();
+
+    renderAll();
+
+}
+
+function deleteStatus(index){
+
+    const status =
+    statusOptions[index];
+
+    if(!status) return;
+
+    if(statusOptions.length === 1){
+
+        alert(
+            "At least one status is required."
+        );
+
+        return;
+
+    }
+
+    const confirmed =
+    confirm(
+        `Delete "${status}"? Tasks using it will move to "${statusOptions[0] === status ? statusOptions[1] : statusOptions[0]}".`
+    );
+
+    if(!confirmed) return;
+
+    const fallbackStatus =
+    statusOptions[0] === status
+    ?
+    statusOptions[1]
+    :
+    statusOptions[0];
+
+    statusOptions =
+    statusOptions.filter(
+        item => item !== status
+    );
+
+    archivedStatuses =
+    archivedStatuses.filter(
+        item => item !== status
+    );
+
+    tasks.forEach(task => {
+
+        if(task.status === status){
+
+            task.status = fallbackStatus;
+
+        }
+
+    });
+
+    syncTaskArchiveStates();
+
+    saveStatusSettings();
+
+    saveTasks();
+
+    renderAll();
+
+}
+
+function toggleFinalStatus(index,isFinal){
+
+    const status =
+    statusOptions[index];
+
+    if(!status) return;
+
+    if(isFinal){
+
+        if(!archivedStatuses.includes(status)){
+
+            archivedStatuses.push(status);
+
+        }
+
+    }
+    else{
+
+        archivedStatuses =
+        archivedStatuses.filter(
+            item => item !== status
+        );
+
+    }
+
+    syncTaskArchiveStates();
+
+    saveStatusSettings();
+
+    saveTasks();
+
+    renderAll();
+
+}
+
+/* =====================================
+   ARCHIVE FUNCTIONS
+===================================== */
+
+function archiveTask(id){
+
+    const task =
+    getTaskById(id);
+
+    if(!task) return;
+
+    task.archived = true;
+
+    task.status =
+    archivedStatuses[0] || "Done";
+
+    saveTasks();
+
+    closeTaskDetails();
+
+    renderAll();
+
+}
+
+function restoreTask(id){
+
+    const task =
+    getTaskById(id);
+
+    if(!task) return;
+
+    task.archived = false;
+
+    task.status = "To Do";
+
+    saveTasks();
+
+    renderAll();
+
+}
+
+function deleteTask(id){
+
+    const confirmed =
+    confirm(
+        "Delete this task permanently?"
+    );
+
+    if(!confirmed) return;
+
+    tasks =
+    tasks.filter(
+        task => String(task.id) !== String(id)
+    );
+
+    saveTasks();
+
+    renderAll();
+
+}
+
+/* =====================================
+   BULK SELECTION
+===================================== */
+
+function toggleSelection(id){
+
+    if(
+        selectedTasks.includes(id)
+    ){
+
+        selectedTasks =
+        selectedTasks.filter(
+            x => x !== id
+        );
+
+    }
+    else{
+
+        selectedTasks.push(id);
+
+    }
+
+}
+
+function archiveSelected(){
+
+    if(
+        selectedTasks.length === 0
+    ){
+
+        alert(
+            "No tasks selected."
+        );
+
+        return;
+
+    }
+
+    tasks.forEach(task=>{
+
+        if(
+            selectedTasks.includes(
+                task.id
+            )
+        ){
+
+            task.archived = true;
+
+            task.status = "Done";
+
+        }
+
+    });
+
+    selectedTasks = [];
+
+    saveTasks();
+
+    renderAll();
+
+}
+
+/* =====================================
+   SPECIAL TASKS
+===================================== */
+
+function addSpecialTask(){
+
+    const titleInput =
+    document.getElementById(
+        "specialTitle"
+    );
+
+    const instructionInput =
+    document.getElementById(
+        "specialInstruction"
+    );
+
+    const title =
+    titleInput?.value.trim() || "";
+
+    const instruction =
+    instructionInput?.value.trim() || "";
+
+    if(title === "" && instruction === ""){
+
+        alert(
+            "Enter a title or instruction."
+        );
+
+        return;
+
+    }
+
+    specialTasks.unshift({
+
+        id: Date.now(),
+
+        title:
+        title || "Special Instruction",
+
+        instruction,
+
+        createdAt:
+        new Date().toISOString()
+
+    });
+
+    if(titleInput) titleInput.value = "";
+
+    if(instructionInput) instructionInput.value = "";
+
+    saveSpecialTasks();
+
+    renderSpecialTasks();
+
+}
+
+function updateSpecialTask(id){
+
+    const task =
+    specialTasks.find(item =>
+        item.id === id
+    );
+
+    if(!task) return;
+
+    const titleInput =
+    document.getElementById(
+        "specialEditTitle"
+    );
+
+    const instructionInput =
+    document.getElementById(
+        "specialEditInstruction"
+    );
+
+    const title =
+    titleInput?.value.trim() || "";
+
+    const instruction =
+    instructionInput?.value.trim() || "";
+
+    if(title === "" && instruction === ""){
+
+        alert(
+            "Enter a title or instruction."
+        );
+
+        return;
+
+    }
+
+    task.title =
+    title || "Special Instruction";
+
+    task.instruction =
+    instruction;
+
+    task.updatedAt =
+    new Date().toISOString();
+
+    saveSpecialTasks();
+
+    renderSpecialTasks();
+
+    openSpecialPopup(id);
+
+}
+
+function deleteSpecialTask(id){
+
+    const confirmed =
+    confirm(
+        "Delete this special task?"
+    );
+
+    if(!confirmed) return;
+
+    specialTasks =
+    specialTasks.filter(task =>
+        task.id !== id
+    );
+
+    saveSpecialTasks();
+
+    renderSpecialTasks();
+
+}
+
+function renderSpecialTasks(){
+
+    const list =
+    document.getElementById(
+        "specialList"
+    );
+
+    if(!list) return;
+
+    if(specialTasks.length === 0){
+
+        list.innerHTML =
+        `<p class="report-empty">No special tasks or instructions yet.</p>`;
+
+        return;
+
+    }
+
+    list.innerHTML =
+    specialTasks
+    .map(task => `
+
+        <button
+        class="special-card"
+        onclick="openSpecialPopup(${task.id})">
+            <h3>${escapeHtml(task.title || "Special Instruction")}</h3>
+            <p>${escapeHtml(task.instruction || "")}</p>
+            <div class="special-meta">
+                Added ${escapeHtml(formatUpdateDate(task.createdAt))}
+            </div>
+        </button>
+
+    `)
+    .join("");
+
+}
+
+function openSpecialPopup(id){
+
+    const task =
+    specialTasks.find(item =>
+        item.id === id
+    );
+
+    if(!task) return;
+
+    const modal =
+    document.getElementById(
+        "specialModal"
+    );
+
+    const overlay =
+    document.getElementById(
+        "specialModalOverlay"
+    );
+
+    if(!modal || !overlay) return;
+
+    modal.innerHTML = `
+
+        <div class="modal-header">
+            <h2>Special Task Details</h2>
+            <button onclick="closeSpecialPopup()">Close</button>
+        </div>
+
+        <div class="modal-body">
+            <div class="detail-field">
+                <label>Title</label>
+                <input
+                id="specialEditTitle"
+                value="${escapeHtml(task.title || "")}">
+            </div>
+
+            <div class="detail-field">
+                <label>Instruction</label>
+                <textarea
+                id="specialEditInstruction">${escapeHtml(task.instruction || "")}</textarea>
+            </div>
+
+            <div class="special-meta">
+                Added ${escapeHtml(formatUpdateDate(task.createdAt))}
+                ${
+                    task.updatedAt
+                    ? ` - Edited ${escapeHtml(formatUpdateDate(task.updatedAt))}`
+                    : ""
+                }
+            </div>
+
+            <div class="update-editor-actions">
+                <button onclick="updateSpecialTask(${task.id})">
+                    Edit
+                </button>
+                <button onclick="deleteSpecialTaskFromPopup(${task.id})">
+                    Delete
+                </button>
+            </div>
+        </div>
+
+    `;
+
+    overlay.classList.remove(
+        "hidden"
+    );
+
+}
+
+function closeSpecialPopup(){
+
+    document
+    .getElementById(
+        "specialModalOverlay"
+    )
+    ?.classList.add(
+        "hidden"
+    );
+
+}
+
+function deleteSpecialTaskFromPopup(id){
+
+    deleteSpecialTask(id);
+
+    closeSpecialPopup();
+
+}
+/* =====================================
+   SEARCH & SORT
+===================================== */
+
+function getFilteredTasks(){
+
+    let filtered =
+    tasks.filter(
+        task => !task.archived
+    );
+
+    const search =
+    document.getElementById(
+        "searchBox"
+    )?.value
+    .toLowerCase()
+    .trim();
+
+    if(search){
+
+        filtered =
+        filtered.filter(task =>
+
+            task.taskName
+            .toLowerCase()
+            .includes(search)
+
+            ||
+
+            (task.assignee || "")
+            .toLowerCase()
+            .includes(search)
+
+            ||
+
+            (task.department || "")
+            .toLowerCase()
+            .includes(search)
+
+            ||
+
+            (task.project || "")
+            .toLowerCase()
+            .includes(search)
+
+            ||
+
+            (task.description || "")
+            .toLowerCase()
+            .includes(search)
+
+        );
+
+    }
+
+    const categoryFilter =
+    getFilterValue("filterCategory");
+
+    const projectFilter =
+    getFilterValue("filterProject");
+
+    const priorityFilter =
+    getFilterValue("filterPriority");
+
+    const statusFilter =
+    getFilterValue("filterStatus");
+
+    if(categoryFilter){
+
+        filtered =
+        filtered.filter(task =>
+            task.department === categoryFilter
+        );
+
+    }
+
+    if(projectFilter){
+
+        filtered =
+        filtered.filter(task =>
+            task.project === projectFilter
+        );
+
+    }
+
+    if(priorityFilter){
+
+        filtered =
+        filtered.filter(task =>
+            task.priority === priorityFilter
+        );
+
+    }
+
+    if(statusFilter){
+
+        filtered =
+        filtered.filter(task =>
+            task.status === statusFilter
+        );
+
+    }
+
+    const sort =
+    document.getElementById(
+        "sortBy"
+    )?.value;
+
+    switch(sort){
+
+        case "task":
+
+            filtered.sort(
+                (a,b)=>
+                a.taskName.localeCompare(
+                    b.taskName
+                )
+            );
+
+            break;
+
+        case "assignee":
+
+            filtered.sort(
+                (a,b)=>
+                a.assignee.localeCompare(
+                    b.assignee
+                )
+            );
+
+            break;
+
+        case "status":
+
+            filtered.sort(
+                (a,b)=>
+                a.status.localeCompare(
+                    b.status
+                )
+            );
+
+            break;
+
+        case "priority":
+
+            const priorityMap = {
+
+                High:1,
+                Medium:2,
+                Low:3
+
+            };
+
+            filtered.sort(
+                (a,b)=>
+                priorityMap[a.priority]
+                -
+                priorityMap[b.priority]
+            );
+
+            break;
+
+        case "due":
+
+            filtered.sort(
+                (a,b)=>
+                new Date(a.dueDate || 0)
+                -
+                new Date(b.dueDate || 0)
+            );
+
+            break;
+
+    }
+
+    return filtered;
+
+}
+
+/* =====================================
+   PRIORITY BADGES
+===================================== */
+
+function getPriorityClass(
+priority
+){
+
+    let badgeClass =
+    "priority-medium";
+
+    if(priority==="High")
+        badgeClass =
+        "priority-high";
+
+    if(priority==="Low")
+        badgeClass =
+        "priority-low";
+
+    return badgeClass;
+
+}
+
+function getPriorityBadge(
+priority
+){
+
+    const badgeClass =
+    getPriorityClass(priority);
+
+    return `
+
+    <span
+    class="
+    priority-badge
+    ${badgeClass}
+    ">
+
+        ${priority}
+
+    </span>
+
+    `;
+
+}
+
+/* =====================================
+   DUE DATE ALERTS
+===================================== */
+
+function getDueClass(
+dueDate
+){
+
+    if(!dueDate)
+        return "";
+
+    const today =
+    new Date();
+
+    today.setHours(
+        0,0,0,0
+    );
+
+    const due =
+    new Date(
+        dueDate
+    );
+
+    due.setHours(
+        0,0,0,0
+    );
+
+    if(due < today){
+
+        return "overdue";
+
+    }
+
+    if(
+        due.getTime()
+        ===
+        today.getTime()
+    ){
+
+        return "due-today";
+
+    }
+
+    return "";
+
+}
+
+function getDueLabel(dueDate){
+
+    const dueClass =
+    getDueClass(dueDate);
+
+    if(dueClass === "overdue"){
+
+        return "Overdue";
+
+    }
+
+    if(dueClass === "due-today"){
+
+        return "Due today";
+
+    }
+
+    return dueDate
+    ? `Due ${dueDate}`
+    : "No due date";
+
+}
+
+/* =====================================
+   DASHBOARD
+===================================== */
+
+function renderDashboard(){
+
+    const stats =
+    document.getElementById(
+        "dashboardStats"
+    );
+
+    if(!stats) return;
+
+    const summary =
+    getDashboardStats();
+
+    stats.innerHTML =
+    `
+
+        <div class="dashboard-hero">
+
+            <div>
+                <h2>Today's Work</h2>
+                <p>
+                    A calmer view of what needs attention, what is moving, and what is already off your plate.
+                </p>
+
+                <div class="work-progress">
+                    <div class="work-progress-header">
+                        <span>Completed Work</span>
+                        <span>${summary.progress}%</span>
+                    </div>
+                    <div class="work-progress-track">
+                        <div class="work-progress-fill" style="width:${summary.progress}%"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="dashboard-metrics">
+                <div class="metric-tile">
+                    <span class="metric-label">Total Tasks</span>
+                    <span class="metric-value">${summary.total}</span>
+                </div>
+                <div class="metric-tile">
+                    <span class="metric-label">Active</span>
+                    <span class="metric-value">${summary.active}</span>
+                </div>
+                <div class="metric-tile">
+                    <span class="metric-label">Due Today</span>
+                    <span class="metric-value">${summary.dueToday}</span>
+                </div>
+                <div class="metric-tile">
+                    <span class="metric-label">Overdue</span>
+                    <span class="metric-value">${summary.overdue}</span>
+                </div>
+                <div class="metric-tile">
+                    <span class="metric-label">High Priority</span>
+                    <span class="metric-value">${summary.highPriority}</span>
+                </div>
+                <button
+                class="metric-tile action"
+                onclick="showSpecialView()">
+                    <span class="metric-label">Special Tasks</span>
+                    <span class="metric-value">${specialTasks.length}</span>
+                </button>
+            </div>
+
+        </div>
+
+    `;
+
+}
+
+/* =====================================
+   TABLE VIEW
+===================================== */
+
+function renderTasks(){
+
+    const rows =
+    document.getElementById(
+        "taskRows"
+    );
+
+    if(!rows) return;
+
+    rows.innerHTML = "";
+
+
+    const filtered =
+    getFilteredTasks();
+
+    const counter =
+    document.getElementById(
+        "tableTaskCounter"
+    );
+
+    if(counter){
+
+        const activeTotal =
+        tasks.filter(task =>
+            !task.archived
+        ).length;
+
+        counter.textContent =
+        filtered.length === activeTotal
+        ? `${filtered.length} ${filtered.length === 1 ? "task" : "tasks"}`
+        : `${filtered.length} of ${activeTotal} tasks`;
+
+    }
+
+    filtered.forEach(task=>{
+
+        const dueClass =
+        getDueClass(
+            task.dueDate
+        );
+
+        const taskActionId =
+        getTaskActionId(task);
+
+        rows.innerHTML += `
+
+        <div
+        class="
+        task-row
+        ${dueClass}
+        ">
+
+            <div>
+
+                ${getTaskIdLinkHtml(task)}
+
+            </div>
+
+            <div>
+
+                <button
+                class="task-link"
+                onclick="openTaskDetails(${taskActionId})">
+                    ${escapeHtml(task.taskName || "-")}
+                </button>
+
+            </div>
+
+            <div>
+
+                ${escapeHtml(task.assignee || "-")}
+
+            </div>
+
+            <div>
+
+                ${escapeHtml(task.department || "-")}
+
+            </div>
+
+            <div>
+
+                ${escapeHtml(task.project || "-")}
+
+            </div>
+
+            <div>
+
+                <input
+                type="date"
+
+                value="${
+                task.dateStarted || ""
+                }"
+
+                onchange="
+                updateDateStarted(
+                ${taskActionId},
+                this.value
+                )">
+
+            </div>
+
+            <div>
+
+                <input
+                type="date"
+
+                value="${
+                task.dueDate || ""
+                }"
+
+                onchange="
+                updateDueDate(
+                ${taskActionId},
+                this.value
+                )">
+
+            </div>
+
+            <div>
+
+                <select
+                class="
+                priority-select
+                ${getPriorityClass(task.priority)}
+                "
+
+                onchange="
+                updatePriority(
+                ${taskActionId},
+                this.value
+                )">
+
+                    <option
+                    value="Low"
+                    ${task.priority==="Low"?"selected":""}>
+                    Low
+                    </option>
+
+                    <option
+                    value="Medium"
+                    ${task.priority==="Medium"?"selected":""}>
+                    Medium
+                    </option>
+
+                    <option
+                    value="High"
+                    ${task.priority==="High"?"selected":""}>
+                    High
+                    </option>
+
+                </select>
+
+            </div>
+
+            <div>
+
+                <select
+
+                onchange="
+                updateStatus(
+                ${taskActionId},
+                this.value
+                )">
+
+                    ${getStatusOptionsHtml(task.status)}
+
+                </select>
+
+            </div>
+
+        </div>
+
+        `;
+
+    });
+
+}
+/* =====================================
+   KANBAN VIEW
+===================================== */
+
+function renderKanban(){
+
+    const board =
+    document.getElementById(
+        "kanbanBoard"
+    );
+
+    if(!board) return;
+
+    const activeTasks =
+    tasks.filter(task =>
+        !task.archived
+    );
+
+    board.innerHTML =
+    getActiveKanbanStatuses()
+    .map(status => {
+
+        const statusCount =
+        activeTasks.filter(task =>
+            task.status === status
+        ).length;
+
+        return `
+
+        <div class="column">
+            <h2>
+                <span>${escapeHtml(status)}</span>
+                <span class="kanban-count">
+                    ${statusCount}
+                </span>
+            </h2>
+            <div id="kanban-${getStatusClass(status)}"></div>
+        </div>
+
+    `;
+
+    })
+    .join("");
+
+    activeTasks.forEach(task => {
+
+        const target =
+        document.getElementById(
+            `kanban-${getStatusClass(task.status)}`
+        );
+
+        if(!target) return;
+
+        const taskActionId =
+        getTaskActionId(task);
+
+        const card = `
+
+        <button
+        type="button"
+        onclick="openTaskDetails(${taskActionId})"
+        aria-label="Open ${escapeHtml(task.taskName || "task")} details"
+        class="
+        card
+        ${(task.priority || "Medium").toLowerCase()}
+        ">
+
+            <strong>
+                ${escapeHtml(task.taskName || "-")}
+            </strong>
+
+            <p>
+                ${escapeHtml(task.assignee || "-")}
+            </p>
+
+            <p>
+                ${escapeHtml(task.project || "")}
+            </p>
+
+            <p>
+                Due:
+                ${escapeHtml(task.dueDate || "-")}
+            </p>
+
+        </button>
+
+        `;
+
+        target.innerHTML += card;
+
+    });
+
+}
+
+/* =====================================
+   ARCHIVE VIEW
+===================================== */
+
+function renderArchive(){
+
+    const archive =
+    document.getElementById(
+        "archiveBody"
+    );
+
+    if(!archive) return;
+
+    archive.innerHTML = "";
+
+    tasks
+    .filter(
+        task => task.archived
+    )
+    .forEach(task => {
+
+        const taskActionId =
+        getTaskActionId(task);
+
+        archive.innerHTML += `
+
+        <tr>
+
+            <td>
+                ${task.taskName}
+            </td>
+
+            <td>
+                ${task.assignee}
+            </td>
+
+            <td>
+                ${task.project || ""}
+            </td>
+
+            <td>
+                ${task.status}
+            </td>
+
+            <td>
+
+                <button
+
+                onclick="
+                restoreTask(
+                ${taskActionId}
+                )">
+
+                Restore
+
+                </button>
+
+            </td>
+
+            <td>
+
+                <button
+
+                onclick="
+                deleteTask(
+                ${taskActionId}
+                )">
+
+                Delete
+
+                </button>
+
+            </td>
+
+        </tr>
+
+        `;
+
+    });
+
+}
+
+/* =====================================
+   REPORTS
+===================================== */
+
+function generateReport(){
+
+    const report =
+    document.getElementById(
+        "reportContent"
+    );
+
+    if(!report) return;
+
+    const activeTasks =
+    tasks.filter(
+        task => !task.archived
+    );
+
+    const statusCounts =
+    statusOptions.map(status => ({
+
+        label: status,
+        count:
+        tasks.filter(
+            task => task.status === status
+        ).length,
+        className:
+        getStatusClass(status)
+
+    }));
+
+    const statusTotal =
+    Math.max(tasks.length, 1);
+
+    const statusPercent =
+    count => Math.round(
+        count / statusTotal * 100
+    );
+
+    const statusRows =
+    statusCounts
+    .filter(status => status.count > 0)
+    .map(status => `
+
+        <div class="status-compact-item">
+            <strong>${status.label}</strong>
+            <span>${status.count}</span>
+        </div>
+
+    `)
+    .join("");
+
+    const focusTasks =
+    [...activeTasks]
+    .sort((a,b) => {
+
+        const aDueClass =
+        getDueClass(a.dueDate);
+
+        const bDueClass =
+        getDueClass(b.dueDate);
+
+        const urgency = {
+            "overdue":0,
+            "due-today":1,
+            "":2
+        };
+
+        const aUrgency =
+        urgency[aDueClass] ?? 2;
+
+        const bUrgency =
+        urgency[bDueClass] ?? 2;
+
+        if(aUrgency !== bUrgency){
+
+            return aUrgency - bUrgency;
+
+        }
+
+        if(a.priority === "High" && b.priority !== "High"){
+
+            return -1;
+
+        }
+
+        if(a.priority !== "High" && b.priority === "High"){
+
+            return 1;
+
+        }
+
+        return new Date(a.dueDate || "9999-12-31")
+        -
+        new Date(b.dueDate || "9999-12-31");
+
+    })
+    .slice(0,6);
+
+    const focusRows =
+    focusTasks
+    .map(task => {
+
+        const dueClass =
+        getDueClass(task.dueDate);
+
+        const taskActionId =
+        getTaskActionId(task);
+
+        return `
+
+            <button
+            class="focus-item"
+            onclick="openTaskDetails(${taskActionId})">
+                <span class="focus-title">${escapeHtml(task.taskName || "-")}</span>
+                <span class="focus-meta">
+                    ${escapeHtml(task.project || "No project")}
+                    ·
+                    ${escapeHtml(task.assignee || "Unassigned")}
+                </span>
+                <span class="focus-tags">
+                    <span class="work-chip ${dueClass === "overdue" ? "alert" : dueClass === "due-today" ? "today" : ""}">
+                        ${escapeHtml(getDueLabel(task.dueDate))}
+                    </span>
+                    <span class="work-chip ${task.priority === "High" ? "high" : ""}">
+                        ${escapeHtml(task.priority || "Medium")}
+                    </span>
+                    <span class="work-chip">
+                        ${escapeHtml(task.status || "-")}
+                    </span>
+                </span>
+            </button>
+
+        `;
+
+    })
+    .join("");
+
+    const recentUpdates =
+    tasks
+    .flatMap(task =>
+        Array.isArray(task.updates)
+        ?
+        task.updates.map(update => ({
+            task,
+            update
+        }))
+        :
+        []
+    )
+    .sort((a,b) =>
+        new Date(b.update.createdAt || 0)
+        -
+        new Date(a.update.createdAt || 0)
+    )
+    .slice(0,3);
+
+    const updateRows =
+    recentUpdates
+    .map(item => `
+
+        <div class="update-card compact-update">
+            <strong>${escapeHtml(item.task.taskName || "-")}</strong>
+            <div class="update-snippet">
+                ${escapeHtml(formatUpdateDate(item.update.createdAt))}
+            </div>
+        </div>
+
+    `)
+    .join("");
+
+    report.innerHTML = `
+
+    <div class="dashboard-panels">
+
+        <div class="report-section">
+
+            <h3>Work Snapshot</h3>
+
+            <div class="focus-list">
+                ${
+                    focusRows ||
+                    `<p class="report-empty">No active tasks need attention.</p>`
+                }
+            </div>
+
+        </div>
+
+        <div class="report-section compact">
+
+            <div class="report-block">
+
+                <h3>Status Summary</h3>
+
+                <div class="status-compact-list">
+                    ${
+                        statusRows ||
+                        `<p class="report-empty">No task statuses yet.</p>`
+                    }
+                </div>
+
+            </div>
+
+            <div class="report-block">
+
+                <h3>Recent Updates</h3>
+
+                <div class="recent-update-strip">
+                    ${
+                        updateRows ||
+                        `<p class="report-empty">No updates have been added yet.</p>`
+                    }
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    `;
+
+}
+
+/* =====================================
+   CSV EXPORT
+===================================== */
+
+function exportToCSV(){
+
+    let rows = [[
+
+        "Task",
+        "Assignee",
+        "Category",
+        "Project",
+        "Started",
+        "Due",
+        "Priority",
+        "Status",
+        "Description"
+
+    ]];
+
+    tasks.forEach(task => {
+
+        rows.push([
+
+            task.taskName,
+            task.assignee,
+            task.department,
+            task.project,
+            task.dateStarted,
+            task.dueDate,
+            task.priority,
+            task.status,
+            task.description
+
+        ]);
+
+    });
+
+    const csv =
+    rows
+    .map(
+        row =>
+        row.map(csvValue).join(",")
+    )
+    .join("\n");
+
+    const blob =
+    new Blob(
+        [csv],
+        {
+            type:"text/csv"
+        }
+    );
+
+    const link =
+    document.createElement(
+        "a"
+    );
+
+    link.href =
+    URL.createObjectURL(
+        blob
+    );
+
+    link.download =
+    "tasks.csv";
+
+    link.click();
+
+}
+
+function csvValue(value){
+
+    const text =
+    String(value ?? "");
+
+    return `"${text.replace(/"/g,'""')}"`;
+
+}
+
+function escapeHtml(value){
+
+    return String(value ?? "")
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;");
+
+}
+
+function downloadTableExcel(){
+
+    const activeTasks =
+    getFilteredTasks();
+
+    const rows =
+    activeTasks
+    .map(task => `
+
+        <tr>
+            <td>${escapeHtml(task.taskName)}</td>
+            <td>${escapeHtml(task.assignee)}</td>
+            <td>${escapeHtml(task.department)}</td>
+            <td>${escapeHtml(task.project)}</td>
+            <td>${escapeHtml(task.dateStarted)}</td>
+            <td>${escapeHtml(task.dueDate)}</td>
+            <td>${escapeHtml(task.priority)}</td>
+            <td>${escapeHtml(task.status)}</td>
+            <td>${escapeHtml(task.description)}</td>
+        </tr>
+
+    `)
+    .join("");
+
+    const workbook = `
+
+        <html>
+            <head>
+                <meta charset="UTF-8">
+            </head>
+            <body>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Task</th>
+                            <th>Assignee</th>
+                            <th>Category</th>
+                            <th>Project</th>
+                            <th>Started</th>
+                            <th>Due</th>
+                            <th>Priority</th>
+                            <th>Status</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${rows}
+                    </tbody>
+                </table>
+            </body>
+        </html>
+
+    `;
+
+    const blob =
+    new Blob(
+        [workbook],
+        {
+            type:"application/vnd.ms-excel"
+        }
+    );
+
+    const link =
+    document.createElement(
+        "a"
+    );
+
+    link.href =
+    URL.createObjectURL(
+        blob
+    );
+
+    link.download =
+    "tasks-table.xls";
+
+    link.click();
+
+    URL.revokeObjectURL(
+        link.href
+    );
+
+}
+
+/* =====================================
+   CSV IMPORT
+===================================== */
+
+function parseCSV(text){
+
+    const rows = [];
+    let row = [];
+    let value = "";
+    let inQuotes = false;
+
+    for(let index = 0; index < text.length; index++){
+
+        const char =
+        text[index];
+
+        if(char === '"'){
+
+            if(inQuotes && text[index + 1] === '"'){
+
+                value += '"';
+                index++;
+
+            }
+            else{
+
+                inQuotes = !inQuotes;
+
+            }
+
+        }
+        else if(char === "," && !inQuotes){
+
+            row.push(value);
+            value = "";
+
+        }
+        else if(char === "\n" && !inQuotes){
+
+            row.push(value);
+            rows.push(row);
+            row = [];
+            value = "";
+
+        }
+        else if(char !== "\r"){
+
+            value += char;
+
+        }
+
+    }
+
+    if(value || row.length){
+
+        row.push(value);
+        rows.push(row);
+
+    }
+
+    return rows;
+
+}
+
+function normalizeCsvHeader(header){
+
+    return String(header || "")
+    .replace(/^\uFEFF/,"")
+    .trim();
+
+}
+
+function normalizeBuildiumTaskKey(value){
+
+    return String(value || "")
+    .trim()
+    .toLowerCase()
+    .replace(/\s+/g," ");
+
+}
+
+function rowsToObjects(rows){
+
+    const headers =
+    rows.shift()
+    ?.map(header =>
+        normalizeCsvHeader(header)
+    )
+    ||
+    [];
+
+    return rows
+    .filter(cols =>
+        cols.some(col =>
+            String(col).trim() !== ""
+        )
+    )
+    .map(cols => {
+
+        const item = {};
+
+        headers.forEach((header,index) => {
+
+            item[header] =
+            cols[index] || "";
+
+        });
+
+        return item;
+
+    });
+
+}
+
+function isBuildiumCsv(rows){
+
+    const headers =
+    rows[0]
+    ?.map(header =>
+        normalizeCsvHeader(header).toLowerCase()
+    )
+    ||
+    [];
+
+    return [
+        "taskid",
+        "short description",
+        "assigned to",
+        "creation date",
+        "due date"
+    ].every(header =>
+        headers.includes(header)
+    )
+    &&
+    (
+        headers.includes("latest comments")
+        ||
+        headers.includes("latest updates")
+    );
+
+}
+
+function getBuildiumLatestUpdate(row){
+
+    return String(
+        row["Latest comments"]
+        ||
+        row["Latest updates"]
+        ||
+        ""
+    )
+    .trim();
+
+}
+
+function isBuildiumMaintenanceRow(row){
+
+    const category =
+    String(row.Category || "")
+    .toLowerCase();
+
+    return category.includes(
+        "maintenance"
+    );
+
+}
+
+function getBuildiumCategory(row){
+
+    const category =
+    String(row.Category || "").trim();
+
+    return category || "Uncategorized";
+
+}
+
+function mapBuildiumPriority(priority){
+
+    const cleaned =
+    String(priority || "").trim();
+
+    if(cleaned === "High") return "High";
+
+    if(cleaned === "Low") return "Low";
+
+    return "Medium";
+
+}
+
+function toInputDate(value){
+
+    const date =
+    new Date(value);
+
+    if(Number.isNaN(date.getTime())){
+
+        return "";
+
+    }
+
+    return date.toISOString().slice(0,10);
+
+}
+
+function toUpdateDate(value){
+
+    const date =
+    new Date(value);
+
+    if(Number.isNaN(date.getTime())){
+
+        return new Date().toISOString();
+
+    }
+
+    return date.toISOString();
+
+}
+
+function buildBuildiumDescription(row){
+
+    return [
+        ["Buildium Task ID", row.TaskId],
+        ["Task Type", row["Task type"]],
+        ["Property", row.Property],
+        ["Unit", row.Unit],
+        ["Vendors", row.Vendors],
+        ["Amount", row.Amount],
+        ["Last Updated", row["Last updated date"]]
+    ]
+    .filter(item =>
+        String(item[1] || "").trim() !== ""
+    )
+    .map(item =>
+        `${item[0]}: ${item[1]}`
+    )
+    .join("\n");
+
+}
+
+function importBuildiumRows(rows){
+
+    let importedCount = 0;
+    let updatedCount = 0;
+    let skippedMaintenanceCount = 0;
+    const buildiumIdsInFile = [];
+    const buildiumRows =
+    rowsToObjects(rows);
+
+    const priorTasksById =
+    new Map(
+        tasks.map(task => [
+            String(task.id),
+            task
+        ])
+    );
+
+    const priorTasksByBuildiumId =
+    new Map(
+        tasks
+        .filter(task =>
+            task.buildiumTaskId
+        )
+        .map(task => [
+            String(task.buildiumTaskId),
+            task
+        ])
+    );
+
+    const priorTasksByName =
+    new Map(
+        tasks
+        .filter(task =>
+            normalizeBuildiumTaskKey(task.taskName)
+        )
+        .map(task => [
+            normalizeBuildiumTaskKey(task.taskName),
+            task
+        ])
+    );
+
+    const importableBuildiumRows =
+    buildiumRows.filter(row =>
+        !isBuildiumMaintenanceRow(row)
+    );
+
+    const allBuildiumIds =
+    importableBuildiumRows
+    .map(row =>
+        row.TaskId
+        ? String(Number(row.TaskId))
+        : ""
+    )
+    .filter(Boolean);
+
+    const allBuildiumNames =
+    importableBuildiumRows
+    .map(row =>
+        normalizeBuildiumTaskKey(row["Short description"])
+    )
+    .filter(Boolean);
+
+    const removedAppOnlyCount =
+    tasks.filter(task =>
+        !allBuildiumIds.includes(String(task.id))
+        &&
+        !allBuildiumIds.includes(String(task.buildiumTaskId || ""))
+        &&
+        !allBuildiumNames.includes(
+            normalizeBuildiumTaskKey(task.taskName)
+        )
+    ).length;
+
+    tasks = [];
+
+    buildiumRows.forEach((row,index) => {
+
+        if(
+            isBuildiumMaintenanceRow(row)
+        ){
+
+            skippedMaintenanceCount++;
+
+            return;
+
+        }
+
+        const importedStatus =
+        row.Status || statusOptions[0];
+
+        if(
+            importedStatus
+            &&
+            !statusOptions.includes(importedStatus)
+        ){
+
+            statusOptions.push(importedStatus);
+
+        }
+
+        const latestUpdate =
+        getBuildiumLatestUpdate(row);
+
+        const buildiumId =
+        row.TaskId
+        ? Number(row.TaskId)
+        : Date.now() + Math.random();
+
+        buildiumIdsInFile.push(
+            buildiumId
+        );
+
+        const mappedTask = {
+
+            id:
+            buildiumId,
+
+            source:"buildium",
+
+            buildiumTaskId:
+            buildiumId,
+
+            buildiumTaskUrl:
+            `https://savannaimpalallc.managebuilding.com/manager/app/tasks/${encodeURIComponent(buildiumId)}/task-summary`,
+
+            taskName:
+            row["Short description"] || "Untitled Buildium task",
+
+            assignee:
+            row["Assigned to"] || "",
+
+            department:
+            getBuildiumCategory(row),
+
+            project:
+            row.Project || row.Property || "",
+
+            description:
+            row["Short description"] || "",
+
+            dateStarted:
+            toInputDate(row["Creation date"]),
+
+            dueDate:
+            toInputDate(row["Due date"]),
+
+            lastUpdatedAt:
+            toUpdateDate(
+                row["Last updated date"]
+                ||
+                row["Creation date"]
+            ),
+
+            priority:
+            mapBuildiumPriority(row.Priority),
+
+            status:
+            importedStatus,
+
+            updates:
+            latestUpdate
+            ?
+            [{
+                id:
+                Date.now() + index,
+
+                text:
+                latestUpdate,
+
+                createdAt:
+                toUpdateDate(
+                    row["Last updated date"]
+                    ||
+                    row["Creation date"]
+                )
+            }]
+            :
+            [],
+
+            archived:
+            isArchivedStatus(importedStatus)
+
+        };
+
+        const existingTask =
+        priorTasksById.get(
+            String(buildiumId)
+        )
+        ||
+        priorTasksByBuildiumId.get(
+            String(buildiumId)
+        )
+        ||
+        priorTasksByName.get(
+            normalizeBuildiumTaskKey(
+                mappedTask.taskName
+            )
+        );
+
+        if(existingTask){
+
+            mappedTask.updates =
+            mergeTaskUpdates(
+                existingTask.updates,
+                mappedTask.updates
+            );
+
+            tasks.push(mappedTask);
+
+            updatedCount++;
+
+        }
+        else{
+
+            tasks.push(mappedTask);
+
+            importedCount++;
+
+        }
+
+    });
+
+    return {
+        importedCount,
+        updatedCount,
+        skippedMaintenanceCount,
+        removedAppOnlyCount,
+        buildiumTaskCount:
+        buildiumIdsInFile.length
+    };
+
+}
+
+function mergeTaskUpdates(existingUpdates,incomingUpdates){
+
+    const existing =
+    Array.isArray(existingUpdates)
+    ? existingUpdates
+    : [];
+
+    const incoming =
+    Array.isArray(incomingUpdates)
+    ? incomingUpdates
+    : [];
+
+    const merged =
+    [...existing];
+
+    incoming.forEach(update => {
+
+        const alreadyExists =
+        merged.some(item =>
+            String(item.text || "").trim()
+            ===
+            String(update.text || "").trim()
+            &&
+            String(item.createdAt || "")
+            ===
+            String(update.createdAt || "")
+        );
+
+        if(!alreadyExists){
+
+            merged.unshift(update);
+
+        }
+
+    });
+
+    return merged
+    .sort((a,b) =>
+        new Date(b.createdAt || 0)
+        -
+        new Date(a.createdAt || 0)
+    );
+
+}
+
+document
+.getElementById(
+    "csvImport"
+)
+?.addEventListener(
+"change",
+function(event){
+
+    const file =
+    event.target.files[0];
+
+    if(!file) return;
+
+    const reader =
+    new FileReader();
+
+    reader.onload =
+    function(e){
+
+        const text =
+        e.target.result;
+
+        const rows =
+        parseCSV(text);
+
+        if(isBuildiumCsv(rows)){
+
+            const result =
+            importBuildiumRows(rows);
+
+            saveStatusSettings();
+
+            saveTasks();
+
+            renderAll();
+
+            alert(
+                `Buildium sync complete. ${result.buildiumTaskCount} non-maintenance Buildium tasks are now in the app. Imported ${result.importedCount}, refreshed ${result.updatedCount}, removed ${result.removedAppOnlyCount} app-only regular tasks, and skipped ${result.skippedMaintenanceCount} maintenance tasks. Buildium latest comments were added to task updates without replacing existing update history. Special Tasks were not changed.`
+            );
+
+            return;
+
+        }
+
+        rows.shift();
+
+        rows.forEach(cols=>{
+
+            if(
+                cols.every(col =>
+                    String(col).trim() === ""
+                )
+            ){
+
+                return;
+
+            }
+
+            if(cols.length < 9)
+                return;
+
+            const hasDescription =
+            cols.length >= 10;
+
+            const importedStatus =
+            cols[7] || statusOptions[0];
+
+            if(
+                importedStatus
+                &&
+                !statusOptions.includes(importedStatus)
+            ){
+
+                statusOptions.push(importedStatus);
+
+            }
+
+            tasks.push({
+
+                id:
+                Date.now()
+                +
+                Math.random(),
+
+                taskName:cols[0],
+
+                assignee:cols[1],
+
+                department:cols[2],
+
+                project:cols[3],
+
+                dateStarted:cols[4],
+
+                dueDate:cols[5],
+
+                priority:cols[6],
+
+                status:importedStatus,
+
+                description:
+                hasDescription
+                ? cols[8]
+                : "",
+
+                updates:[],
+
+                archived:
+                isArchivedStatus(
+                    importedStatus
+                )
+
+            });
+
+        });
+
+        saveStatusSettings();
+
+        saveTasks();
+
+        renderAll();
+
+    };
+
+    reader.readAsText(
+        file
+    );
+
+});
+
+/* =====================================
+   VIEWS
+===================================== */
+
+function hideAllViews(){
+
+    document
+    .getElementById(
+        "dashboardView"
+    )
+    .classList.add(
+        "hidden"
+    );
+
+    document
+    .getElementById(
+        "tableView"
+    )
+    .classList.add(
+        "hidden"
+    );
+
+    document
+    .getElementById(
+        "kanbanView"
+    )
+    .classList.add(
+        "hidden"
+    );
+
+    document
+    .getElementById(
+        "archiveView"
+    )
+    .classList.add(
+        "hidden"
+    );
+
+    document
+    .getElementById(
+        "specialView"
+    )
+    .classList.add(
+        "hidden"
+    );
+
+    document
+    .getElementById(
+        "settingsView"
+    )
+    .classList.add(
+        "hidden"
+    );
+
+}
+
+function showDashboardView(){
+
+    hideAllViews();
+
+    document
+    .getElementById(
+        "dashboardView"
+    )
+    .classList.remove(
+        "hidden"
+    );
+
+}
+
+function showTableView(){
+
+    hideAllViews();
+
+    document
+    .getElementById(
+        "tableView"
+    )
+    .classList.remove(
+        "hidden"
+    );
+
+}
+
+function showKanbanView(){
+
+    hideAllViews();
+
+    document
+    .getElementById(
+        "kanbanView"
+    )
+    .classList.remove(
+        "hidden"
+    );
+
+}
+
+function showArchiveView(){
+
+    hideAllViews();
+
+    document
+    .getElementById(
+        "archiveView"
+    )
+    .classList.remove(
+        "hidden"
+    );
+
+}
+
+function showSpecialView(){
+
+    hideAllViews();
+
+    document
+    .getElementById(
+        "specialView"
+    )
+    .classList.remove(
+        "hidden"
+    );
+
+    renderSpecialTasks();
+
+}
+
+function showSettingsView(){
+
+    hideAllViews();
+
+    document
+    .getElementById(
+        "settingsView"
+    )
+    .classList.remove(
+        "hidden"
+    );
+
+}
+
+/* =====================================
+   RENDER ALL
+===================================== */
+
+function renderAll(){
+
+    renderTableFilters();
+
+    renderTasks();
+
+    renderDashboard();
+
+    generateReport();
+
+    renderKanban();
+
+    renderArchive();
+
+    renderStatusSettings();
+
+    renderSpecialTasks();
+
+}
+
+/* =====================================
+   EVENTS
+===================================== */
+
+document
+.getElementById(
+    "searchBox"
+)
+?.addEventListener(
+    "input",
+    renderTasks
+);
+
+document
+.getElementById(
+    "sortBy"
+)
+?.addEventListener(
+    "change",
+    renderTasks
+);
+
+/* =====================================
+   STARTUP
+===================================== */
+
+applyDarkMode();
+
+renderAll();
+
+showDashboardView();
+
+openDeepLinkedTask();
+
+initSupabaseClient();
+
+if(cloudSyncEnabled){
+
+    syncFromCloud();
+
+}
+
+setInterval(
+    () => {
+
+        const activeTag =
+        document.activeElement?.tagName;
+
+        const editing =
+        ["INPUT","TEXTAREA","SELECT"].includes(
+            activeTag
+        );
+
+        const dialogOpen =
+        document.querySelector(
+            ".modal:not([hidden]), .popup:not([hidden])"
+        );
+
+        if(
+            cloudSyncEnabled &&
+            document.visibilityState === "visible" &&
+            !editing &&
+            !dialogOpen &&
+            !isLoadingCloudState
+        ){
+
+            syncFromCloud();
+
+        }
+
+    },
+    30000
+);
+
+window.addEventListener(
+    "focus",
+    () => {
+
+        const editing =
+        ["INPUT","TEXTAREA","SELECT"].includes(
+            document.activeElement?.tagName
+        );
+
+        if(
+            cloudSyncEnabled &&
+            !editing &&
+            !isLoadingCloudState
+        ){
+
+            syncFromCloud();
+
+        }
+
+    }
+);
+
+
+</script>
+
+</body>
+
+</html>
+
+
+
