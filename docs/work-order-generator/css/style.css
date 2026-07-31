@@ -96,6 +96,27 @@ select{
     gap:7px;
 }
 
+.operations-home-link{
+    width:100%;
+    min-height:42px;
+    display:flex;
+    align-items:center;
+    justify-content:flex-start;
+    gap:8px;
+    border:1px solid rgba(255,255,255,.18);
+    border-radius:var(--radius);
+    background:rgba(255,255,255,.1);
+    color:#ffffff;
+    padding:9px 12px;
+    text-decoration:none;
+    font-size:13px;
+    font-weight:700;
+}
+
+.operations-home-link:hover{
+    background:rgba(255,255,255,.18);
+}
+
 .nav-button{
     width:100%;
     min-height:42px;
