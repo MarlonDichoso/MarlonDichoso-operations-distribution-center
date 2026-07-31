@@ -30,11 +30,71 @@
     if (filter === "completed") return records.filter(thisMonth);
     return records;
   }
+  function renderSharedSearch() {
+    const query = $("overlaySearch").value.trim().toLowerCase();
+    const list = !query ? records : records.filter((record) =>
+      `${record.app} ${record.title} ${record.meta} ${record.status} ${record.priority}`.toLowerCase().includes(query));
+    $("overlaySearchCount").textContent = list.length;
+    $("overlaySearchResults").innerHTML = list.map((record) => `
+      <article>
+        <span class="record-app ${record.kind}">${record.kind === "tasks" ? "✓" : "⌂"}</span>
+        <div><small>${escapeHtml(record.app)}</small><strong>${escapeHtml(record.title)}</strong><span>${escapeHtml(record.meta || "No additional details")}</span></div>
+        <div><span class="search-status">${escapeHtml(record.status)}</span><button type="button" data-record-href="${record.href}">Open</button></div>
+      </article>`).join("") || '<div class="empty-state">No matching records.</div>';
+  }
+  function openSharedSearch() {
+    $("sharedSearchOverlay").hidden = false;
+    $("overlaySearch").value = $("search").value;
+    renderSharedSearch();
+    $("overlaySearch").focus();
+  }
+  function closeSharedSearch() {
+    $("sharedSearchOverlay").hidden = true;
+  }
+  function openUtility(kind) {
+    $("utilityTitle").textContent = kind === "notifications" ? "Notifications" : "Workspace help";
+    $("utilitySubtitle").textContent = kind === "notifications" ? "Items that may need employee attention." : "Choose the right workspace for the job.";
+    if (kind === "notifications") {
+      $("utilityContent").className = "utility-list";
+      $("utilityContent").innerHTML = filteredRecords("attention").slice(0, 15).map((record) => `
+        <article><span class="record-app ${record.kind}">${record.kind === "tasks" ? "✓" : "⌂"}</span><div><small>${escapeHtml(record.app)}</small><strong>${escapeHtml(record.title)}</strong><span>${escapeHtml(record.meta || record.priority)}</span></div><button type="button" data-record-href="${record.href}">Open</button></article>`).join("") || '<div class="empty-state">No records currently need attention.</div>';
+    } else {
+      $("utilityContent").className = "help-content";
+      $("utilityContent").innerHTML = `
+        <article><span class="shortcut-dot blue"></span><div><strong>Task Management</strong><p>Administrative assignments, compliance, meetings, accounting, legal work, and internal projects.</p></div></article>
+        <article><span class="shortcut-dot amber"></span><div><strong>Maintenance & Vendors</strong><p>Property repairs, work orders, vendors, estimates, due dates, and completed maintenance.</p></div></article>
+        <article><span class="shortcut-dot green"></span><div><strong>Field Operations Documents</strong><p>Work authorizations, quote requests, work verification reports, PDFs, and saved field documents.</p></div></article>
+        <article><span class="shortcut-dot admin"></span><div><strong>Shared Search</strong><p>Find a task in either application and open its exact record directly.</p></div></article>`;
+    }
+    $("utilityOverlay").hidden = false;
+  }
+  function closeUtility() {
+    $("utilityOverlay").hidden = true;
+  }
   function activateMetric(card) {
     selectedFilter = card.dataset.filter || "total";
-    document.querySelectorAll("[data-filter]").forEach((item) => item.classList.toggle("selected", item === card));
-    render(filteredRecords(selectedFilter));
-    document.getElementById("activity").scrollIntoView({ behavior: "smooth", block: "start" });
+    const details = {
+      total: ["All records", "Combined records from both applications"],
+      active: ["Open & active", "Work currently moving through either application"],
+      attention: ["Needs attention", "Overdue, high-priority, or waiting work"],
+      completed: ["Completed this month", "Recently finished administrative and maintenance work"]
+    };
+    const list = filteredRecords(selectedFilter);
+    $("metricTitle").textContent = details[selectedFilter][0];
+    $("metricSubtitle").textContent = details[selectedFilter][1];
+    $("metricCount").textContent = list.length;
+    $("metricLabel").textContent = details[selectedFilter][0];
+    $("metricShown").textContent = `${list.length} shown`;
+    $("metricRecords").innerHTML = list.map((record) => `
+      <article>
+        <span class="record-app ${record.kind}">${record.kind === "tasks" ? "✓" : "⌂"}</span>
+        <div><span class="record-source">${escapeHtml(record.app)}</span><strong>${escapeHtml(record.title)}</strong><small>${escapeHtml(record.meta || "No additional details")}</small></div>
+        <div class="record-actions"><span>${escapeHtml(record.status)}</span><button type="button" data-record-href="${record.href}">Open</button></div>
+      </article>`).join("") || '<div class="empty-state">No records found.</div>';
+    $("metricOverlay").hidden = false;
+  }
+  function closeMetric() {
+    $("metricOverlay").hidden = true;
   }
   async function load() {
     try {
@@ -71,11 +131,7 @@
       $("activityList").innerHTML = '<p class="loading">The shared database is temporarily unavailable.</p>';
     }
   }
-  $("search").addEventListener("input", function () {
-    const query = this.value.trim().toLowerCase();
-    const source = filteredRecords(selectedFilter);
-    render(!query ? source : source.filter((record) => `${record.app} ${record.title} ${record.meta} ${record.status} ${record.priority}`.toLowerCase().includes(query)));
-  });
+  $("search").addEventListener("focus", openSharedSearch);
   document.querySelectorAll("[data-filter]").forEach((card) => {
     card.addEventListener("click", () => activateMetric(card));
     card.addEventListener("keydown", (event) => {
@@ -97,12 +153,46 @@
       }
     });
   });
+  $("metricOverlay").addEventListener("click", closeMetric);
+  $("metricDrawer").addEventListener("click", (event) => event.stopPropagation());
+  $("closeMetric").addEventListener("click", closeMetric);
+  $("doneMetric").addEventListener("click", closeMetric);
+  $("metricRecords").addEventListener("click", (event) => {
+    const button = event.target.closest("[data-record-href]");
+    if (button) location.href = button.dataset.recordHref;
+  });
   $("logout").addEventListener("click", function () {
     sessionStorage.removeItem("odc_employee_access");
     location.href = "login.html";
   });
-  $("focusSearch").addEventListener("click", function () {
-    $("search").focus();
+  $("focusSearch").addEventListener("click", openSharedSearch);
+  $("overlaySearch").addEventListener("input", renderSharedSearch);
+  $("sharedSearchOverlay").addEventListener("click", closeSharedSearch);
+  $("sharedSearchPanel").addEventListener("click", (event) => event.stopPropagation());
+  $("closeSearch").addEventListener("click", closeSharedSearch);
+  $("overlaySearchResults").addEventListener("click", (event) => {
+    const button = event.target.closest("[data-record-href]");
+    if (button) location.href = button.dataset.recordHref;
+  });
+  $("notificationsButton").addEventListener("click", () => openUtility("notifications"));
+  $("helpButton").addEventListener("click", () => openUtility("help"));
+  $("utilityOverlay").addEventListener("click", closeUtility);
+  $("utilityDrawer").addEventListener("click", (event) => event.stopPropagation());
+  $("closeUtility").addEventListener("click", closeUtility);
+  $("utilityContent").addEventListener("click", (event) => {
+    const button = event.target.closest("[data-record-href]");
+    if (button) location.href = button.dataset.recordHref;
+  });
+  document.addEventListener("keydown", (event) => {
+    if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "k") {
+      event.preventDefault();
+      openSharedSearch();
+    }
+    if (event.key === "Escape") {
+      closeSharedSearch();
+      closeUtility();
+      closeMetric();
+    }
   });
   load();
 })();

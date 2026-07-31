@@ -41,7 +41,10 @@
       <header class="topbar">
         <div class="mobile-brand"><span class="brand-mark compact"><i></i><i></i><i></i><i></i></span><strong>Operations Distribution Center</strong></div>
         <label class="search"><span>⌕</span><input id="search" placeholder="Search tasks, work orders, vendors, or properties…" aria-label="Search all applications"><kbd>Ctrl K</kbd></label>
-        <div class="top-actions"><a class="help-button static-admin-link" href="https://unified-property-ops.marlon-dichoso1984.chatgpt.site/tech-admin" target="_blank" rel="noopener">Tech Admin</a></div>
+        <div class="top-actions">
+          <button class="icon-button" id="notificationsButton" type="button" aria-label="Notifications">♢<span class="notification-dot"></span></button>
+          <button class="help-button" id="helpButton" type="button">Help</button>
+        </div>
       </header>
 
       <div class="content">
@@ -96,6 +99,32 @@
       </div>
     </section>
   </main>
+  <div class="shared-search-overlay" id="sharedSearchOverlay" hidden>
+    <section class="shared-search-panel" id="sharedSearchPanel" role="dialog" aria-modal="true" aria-labelledby="sharedSearchTitle">
+      <header><div><p>OPERATIONS DISTRIBUTION CENTER</p><h2 id="sharedSearchTitle">Shared search</h2><span>Search across Task Management and Maintenance.</span></div><button id="closeSearch" type="button" aria-label="Close shared search">×</button></header>
+      <label><span>⌕</span><input id="overlaySearch" placeholder="Task, work order, vendor, property, status…"></label>
+      <div class="shared-search-summary"><strong id="overlaySearchCount">0</strong><span>matching records</span></div>
+      <div class="shared-search-results" id="overlaySearchResults"></div>
+    </section>
+  </div>
+  <div class="utility-overlay" id="utilityOverlay" hidden>
+    <aside class="utility-drawer" id="utilityDrawer" role="dialog" aria-modal="true" aria-labelledby="utilityTitle">
+      <header><div><p>OPERATIONS DISTRIBUTION CENTER</p><h2 id="utilityTitle">Notifications</h2><span id="utilitySubtitle"></span></div><button id="closeUtility" type="button" aria-label="Close panel">×</button></header>
+      <div id="utilityContent"></div>
+    </aside>
+  </div>
+  <div class="metric-overlay" id="metricOverlay" hidden>
+    <aside class="metric-drawer" id="metricDrawer" role="dialog" aria-modal="true" aria-labelledby="metricTitle">
+      <header class="metric-header">
+        <div><p>COMBINED WORKSPACE</p><h2 id="metricTitle">Records</h2><span id="metricSubtitle"></span></div>
+        <button type="button" id="closeMetric" aria-label="Close details">×</button>
+      </header>
+      <div class="metric-summary"><div><strong id="metricCount">0</strong><span id="metricLabel">Records</span></div></div>
+      <div class="metric-list-heading"><strong>Recent records</strong><span id="metricShown"></span></div>
+      <div class="metric-records" id="metricRecords"></div>
+      <footer class="metric-footer"><span>Showing combined data from both applications.</span><button type="button" id="doneMetric">Done</button></footer>
+    </aside>
+  </div>
   <script src="runtime-config.js?v=3"></script>
   <script src="site-app.js?v=3"></script>
 </body>
