@@ -111,12 +111,12 @@
         app: "Tasks", kind: "tasks", title: item.taskName || item.description || "Administrative task",
         meta: [item.project, item.assignee].filter(Boolean).join(" · "), status: item.status || "New",
         priority: item.priority || "Medium", dueDate: item.dueDate || "", updatedAt: item.lastUpdatedAt || "",
-        href: `task-management/index.html?record=${encodeURIComponent(item.id || "")}`
+        href: `task-management/index.html?v=20260730-7&record=${encodeURIComponent(item.id || "")}`
       })).concat(maintenance.map((item) => ({
         app: "Maintenance", kind: "maintenance", title: item.task_name || "Maintenance task",
         meta: [item.property_address, item.vendor_name].filter(Boolean).join(" · "), status: item.status || "Open",
         priority: item.priority || "Medium", dueDate: item.due_date || "", updatedAt: item.updated_at || "",
-        href: `maintenance-vendors/index.html?record=${encodeURIComponent(item.id || "")}`
+        href: `maintenance-vendors/index.html?v=20260730-7&record=${encodeURIComponent(item.id || "")}`
       })));
       records.sort((a, b) => new Date(b.updatedAt || 0) - new Date(a.updatedAt || 0));
       $("totalCount").textContent = records.length;
