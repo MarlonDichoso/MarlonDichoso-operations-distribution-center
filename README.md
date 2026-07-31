@@ -1,5 +1,10 @@
 # Operations Distribution Center
 
+[**OPEN THE LIVE OPERATIONS DISTRIBUTION CENTER**](https://unified-property-ops.marlon-dichoso1984.chatgpt.site)
+
+> Employees should use the live application link above. This GitHub repository
+> stores the application's source code and is not the employee login page.
+
 Operations Distribution Center is the front workspace for separating and
 distributing general administrative tasks and maintenance work.
 
