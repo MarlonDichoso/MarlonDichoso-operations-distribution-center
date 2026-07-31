@@ -385,3 +385,4 @@ kbd { padding: 3px 7px; background: white; border: 1px solid #dfe3eb; border-rad
 .static-admin-link { display: inline-flex; align-items: center; text-decoration: none; }
 .static-tech-link { display: block; width: max-content; margin: 15px auto 0; text-decoration: none; }
 [hidden] { display: none !important; }
+.user-chip.no-avatar { grid-template-columns: 1fr auto; padding-left: 14px; }
