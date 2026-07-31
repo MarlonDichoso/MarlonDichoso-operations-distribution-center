@@ -5,39 +5,94 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Operations Distribution Center</title>
   <link rel="icon" href="favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800&family=Geist+Mono&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="site.css">
   <script src="employee-auth-guard.js"></script>
 </head>
 <body>
-  <main class="app-layout">
+  <main class="app-shell">
     <aside class="sidebar">
-      <div class="brand"><span class="brand-icon"><i></i><i></i><i></i><i></i></span><div><strong>Operations Distribution Center</strong><small>Property workspace</small></div></div>
-      <nav><a class="active" href="index.html">⌂ <span>Home</span></a><a href="#applications">□ <span>Applications</span></a><a href="#activity">◷ <span>Recent activity</span></a></nav>
-      <div class="side-label">APPLICATIONS</div>
-      <a class="side-app" href="task-management/index.html"><b class="blue"></b>Task Management</a>
-      <a class="side-app" href="maintenance-vendors/index.html"><b class="amber"></b>Maintenance</a>
-      <a class="side-app" href="work-order-generator/index.html"><b class="green"></b>Field Documents</a>
-      <div class="sidebar-bottom"><span><b></b>Shared database ready</span><button id="logout">Sign out</button></div>
+      <div class="brand">
+        <div class="brand-mark" aria-label="Operations Distribution Center"><i></i><i></i><i></i><i></i></div>
+        <div><strong>Operations Distribution Center</strong><span>Property workspace</span></div>
+      </div>
+      <nav aria-label="Primary navigation">
+        <button class="nav-item active" type="button" onclick="window.scrollTo({top:0,behavior:'smooth'})"><span>⌂</span>Home</button>
+        <button class="nav-item" id="focusSearch" type="button"><span>⌕</span>Shared search</button>
+        <button class="nav-item" type="button" onclick="document.getElementById('activity').scrollIntoView({behavior:'smooth'})"><span>◷</span>Recent activity</button>
+      </nav>
+      <div class="sidebar-section">
+        <span class="section-label">APPLICATIONS</span>
+        <button class="app-shortcut" type="button" data-href="task-management/index.html"><span class="shortcut-dot blue"></span>Task Management</button>
+        <button class="app-shortcut" type="button" data-href="maintenance-vendors/index.html"><span class="shortcut-dot amber"></span>Maintenance</button>
+        <button class="app-shortcut" type="button" data-href="work-order-generator/index.html"><span class="shortcut-dot green"></span>Field Documents</button>
+      </div>
+      <div class="sidebar-foot">
+        <div class="sync-row"><span class="sync-dot"></span>Shared database ready</div>
+        <button class="user-chip" id="logout" type="button">
+          <span class="avatar">U</span><span><strong>Employee Workspace</strong><small>Company access</small></span><span class="chevron">›</span>
+        </button>
+      </div>
     </aside>
+
     <section class="workspace">
-      <header class="topbar"><div class="mobile-title">Operations Distribution Center</div><label><span>⌕</span><input id="search" placeholder="Search tasks, work orders, vendors, or properties…"></label><a class="admin-link" href="https://unified-property-ops.marlon-dichoso1984.chatgpt.site/tech-admin" target="_blank" rel="noopener">Tech Admin</a></header>
+      <header class="topbar">
+        <div class="mobile-brand"><span class="brand-mark compact"><i></i><i></i><i></i><i></i></span><strong>Operations Distribution Center</strong></div>
+        <label class="search"><span>⌕</span><input id="search" placeholder="Search tasks, work orders, vendors, or properties…" aria-label="Search all applications"><kbd>Ctrl K</kbd></label>
+        <div class="top-actions"><a class="help-button static-admin-link" href="https://unified-property-ops.marlon-dichoso1984.chatgpt.site/tech-admin" target="_blank" rel="noopener">Tech Admin</a></div>
+      </header>
+
       <div class="content">
-        <section class="welcome"><div><span>PROPERTY OPERATIONS</span><h1>Welcome to the Operations Distribution Center.</h1><p>A clear view of administrative and maintenance work.</p></div><div class="connected"><b></b>All systems connected</div></section>
-        <section class="metrics" aria-label="Combined records">
-          <article><span class="metric-icon indigo">▤</span><strong id="totalCount">—</strong><p>Total records</p><small>Across both apps</small></article>
-          <article><span class="metric-icon cyan">↗</span><strong id="activeCount">—</strong><p>Open &amp; active</p><small>Current workload</small></article>
-          <article><span class="metric-icon rose">!</span><strong id="attentionCount">—</strong><p>Need attention</p><small>Overdue or high priority</small></article>
-          <article><span class="metric-icon emerald">✓</span><strong id="completedCount">—</strong><p>Completed</p><small>This month</small></article>
+        <section class="welcome">
+          <div><p class="date-label">UNIFIED PROPERTY OPERATIONS</p><h1>Welcome to the Operations Distribution Center.</h1><p>A clear view of administrative and maintenance work.</p></div>
+          <div class="system-pill"><span class="sync-dot"></span>All systems connected</div>
         </section>
-        <section id="applications" class="applications">
-          <header><div><h2>Your applications</h2><p>Open each workspace with its existing screens and tools.</p></div><span>One login · One database</span></header>
-          <div class="app-grid">
-            <article class="app-card blue-card"><div class="app-top"><span>✓</span><strong id="adminCount">— <small>active records</small></strong></div><b>ADMINISTRATIVE WORK</b><h3>Task Management</h3><p>Plan assignments, review priorities, manage projects, and track administrative work.</p><div class="tags"><span>Dashboard</span><span>Table</span><span>Kanban</span><span>Archive</span></div><a href="task-management/index.html">Open Task Management →</a></article>
-            <article class="app-card amber-card"><div class="app-top"><span>⌂</span><strong id="maintenanceCount">— <small>work orders</small></strong></div><b>PROPERTY OPERATIONS</b><h3>Maintenance &amp; Vendors</h3><p>Monitor work orders, vendors, properties, estimates, and maintenance progress.</p><div class="tags"><span>Vendors</span><span>Properties</span><span>Calendar</span><span>Estimates</span></div><a href="maintenance-vendors/index.html">Open Maintenance &amp; Vendors →</a></article>
-            <article class="app-card green-card"><div class="app-top"><span>▤</span><strong>4 <small>document tools</small></strong></div><b>FIELD DOCUMENTS</b><h3>Field Operations Documents</h3><p>Create work authorizations, verifications, quote requests, and field-ready reports.</p><div class="tags"><span>Authorization</span><span>Verification</span><span>Saved Work</span><span>PDF Reports</span></div><a href="work-order-generator/index.html">Open Field Documents →</a></article>
+
+        <section class="stats-grid" aria-label="Combined workload summary">
+          <button class="stat-card" type="button" data-filter="total"><span class="stat-icon indigo">▤</span><div><strong id="totalCount">—</strong><span>Total records</span></div><small>Across both apps</small><span class="stat-open">View details →</span></button>
+          <button class="stat-card" type="button" data-filter="active"><span class="stat-icon cyan">↗</span><div><strong id="activeCount">—</strong><span>Open &amp; active</span></div><small class="positive">Current workload</small><span class="stat-open">View details →</span></button>
+          <button class="stat-card" type="button" data-filter="attention"><span class="stat-icon rose">!</span><div><strong id="attentionCount">—</strong><span>Need attention</span></div><small>Overdue or high priority</small><span class="stat-open">View details →</span></button>
+          <button class="stat-card" type="button" data-filter="completed"><span class="stat-icon green">✓</span><div><strong id="completedCount">—</strong><span>Completed</span></div><small>This month</small><span class="stat-open">View details →</span></button>
+        </section>
+
+        <section class="app-section" id="applications">
+          <div class="section-heading"><div><h2>Your applications</h2><p>Open either workspace with its existing screens and tools.</p></div><span>One login · One database</span></div>
+          <div class="launcher-grid">
+            <article class="launcher blue static-launcher" data-href="task-management/index.html" tabindex="0" role="link">
+              <div class="launcher-top"><span class="app-symbol">✓</span><div class="launcher-stat"><strong id="adminCount">—</strong><span>active records</span></div></div>
+              <p class="launcher-eyebrow">ADMINISTRATIVE WORK</p><h3>Task Management</h3><p class="launcher-description">Plan assignments, review priorities, manage projects, and track administrative work.</p>
+              <div class="feature-row"><span>Dashboard</span><span>Table</span><span>Kanban</span><span>Archive</span></div>
+              <button type="button">Open Task Management<span>→</span></button>
+            </article>
+            <article class="launcher amber static-launcher" data-href="maintenance-vendors/index.html" tabindex="0" role="link">
+              <div class="launcher-top"><span class="app-symbol">⌂</span><div class="launcher-stat"><strong id="maintenanceCount">—</strong><span>work orders</span></div></div>
+              <p class="launcher-eyebrow">PROPERTY OPERATIONS</p><h3>Maintenance &amp; Vendors</h3><p class="launcher-description">Monitor work orders, vendors, properties, estimates, and maintenance progress.</p>
+              <div class="feature-row"><span>Vendors</span><span>Properties</span><span>Calendar</span><span>Estimates</span></div>
+              <button type="button">Open Maintenance &amp; Vendors<span>→</span></button>
+            </article>
+            <article class="launcher green static-launcher" data-href="work-order-generator/index.html" tabindex="0" role="link">
+              <div class="launcher-top"><span class="app-symbol">▤</span><div class="launcher-stat"><strong>4</strong><span>document tools</span></div></div>
+              <p class="launcher-eyebrow">FIELD DOCUMENTS</p><h3>Field Operations Document Generator</h3><p class="launcher-description">Create work order authorizations, verifications, approval records, and field-ready reports.</p>
+              <div class="feature-row"><span>Authorization</span><span>Verification</span><span>Saved Work</span><span>PDF Reports</span></div>
+              <button type="button">Open Field Operations Document Generator<span>→</span></button>
+            </article>
           </div>
         </section>
-        <section id="activity" class="activity"><header><div><h2>Recent activity</h2><p>Latest updates across both applications</p></div><span id="resultCount"></span></header><div id="activityList" class="activity-list"><p class="loading">Loading shared records…</p></div></section>
+
+        <section class="lower-grid" id="activity">
+          <article class="activity-panel">
+            <div class="panel-heading"><div><h2>Recent activity</h2><p>Latest updates across both applications</p></div><span id="resultCount"></span></div>
+            <div class="activity-list" id="activityList"><div class="empty-state">Loading shared records…</div></div>
+          </article>
+          <aside class="attention-panel">
+            <div class="panel-heading"><div><h2>Needs attention</h2><p>Combined priority queue</p></div><span class="count-badge" id="attentionBadge">—</span></div>
+            <div class="attention-item"><span class="priority high">HIGH</span><strong>Administrative tasks requiring attention</strong><small>Task Management</small></div>
+            <div class="attention-item"><span class="priority waiting">WAITING</span><strong>Work orders waiting on vendors</strong><small>Maintenance &amp; Vendors</small></div>
+            <div class="attention-item"><span class="priority due">DUE SOON</span><strong>Maintenance items due this week</strong><small>Maintenance &amp; Vendors</small></div>
+          </aside>
+        </section>
       </div>
     </section>
   </main>

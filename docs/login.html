@@ -5,31 +5,43 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Employee Login | Operations Distribution Center</title>
   <link rel="icon" href="favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800&family=Geist+Mono&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="site.css">
 </head>
-<body class="login-page">
-  <main class="login-layout">
+<body>
+  <main class="login-shell">
     <section class="login-brand-panel">
-      <div class="brand"><span class="brand-icon"><i></i><i></i><i></i><i></i></span><div><strong>Operations Distribution Center</strong><small>Property workspace</small></div></div>
-      <div class="purpose"><span>DEDICATED OPERATIONS TOOL</span><p>Built exclusively to support the work of <strong>Akolong Technologies</strong> and <strong>Savanna Impala LLC.</strong></p></div>
-      <div class="login-copy">
-        <span>ONE CONNECTED WORKSPACE</span>
-        <h1>Administrative and maintenance work, together.</h1>
-        <p>Enter the company access password to open Task Management, Maintenance &amp; Vendors, and Field Operations Documents.</p>
+      <div class="login-brand">
+        <span class="brand-mark"><i></i><i></i><i></i><i></i></span>
+        <div><strong>Operations Distribution Center</strong><span>Property workspace</span></div>
       </div>
+      <div class="purpose-note"><span>DEDICATED OPERATIONS TOOL</span><p>Built exclusively to support the work of <strong>Akolong Technologies</strong> and <strong>Savanna Impala LLC.</strong></p></div>
+      <div class="login-intro"><p class="login-eyebrow">ONE SECURE WORKSPACE</p><h1>Administrative and maintenance work, together.</h1><p>Enter the company access password to open Task Management and Maintenance &amp; Vendors in one connected workspace.</p></div>
+      <div class="login-app-list">
+        <article><span class="login-app-icon tasks">✓</span><div><strong>Task Management</strong><small>Assignments, priorities, projects, and reporting</small></div></article>
+        <article><span class="login-app-icon maintenance">⌂</span><div><strong>Maintenance &amp; Vendors</strong><small>Work orders, properties, vendors, and estimates</small></div></article>
+      </div>
+      <div class="login-security"><span>●</span>Employee access · Shared database · Activity history</div>
     </section>
     <section class="login-form-panel">
-      <form class="login-card" id="employeeLogin">
-        <span class="eyebrow">EMPLOYEE ACCESS</span>
+      <div class="login-card">
+        <div class="mobile-login-brand"><span class="brand-mark compact"><i></i><i></i><i></i><i></i></span><strong>Operations Distribution Center</strong></div>
+        <p class="login-card-eyebrow">EMPLOYEE ACCESS</p>
         <h2>Access the company workspace</h2>
-        <p>Enter the password provided in the internal employee information sheet.</p>
-        <label>Company Access Password
-          <span class="password-input"><input id="password" type="password" autocomplete="current-password" required autofocus><button id="showPassword" type="button">Show</button></span>
-        </label>
-        <button class="primary" type="submit">Access Workspace <span>→</span></button>
-        <div class="message" id="message" aria-live="polite"></div>
-        <small>For employees of Akolong Technologies and Savanna Impala LLC only.</small>
-      </form>
+        <p class="login-subtitle">Enter the company password provided in your internal information sheet.</p>
+        <form id="employeeLogin">
+          <label>Company Access Password
+            <div class="login-input"><span>◇</span><input id="password" type="password" autocomplete="current-password" placeholder="Enter the company password" required autofocus><button class="show-password" id="showPassword" type="button">Show</button></div>
+          </label>
+          <button class="sign-in-button" type="submit">Access Workspace<span>→</span></button>
+        </form>
+        <div class="login-message" id="message" aria-live="polite"></div>
+        <p class="login-help">For employees of Akolong Technologies and Savanna Impala LLC only.</p>
+        <a class="tech-admin-link static-tech-link" href="https://unified-property-ops.marlon-dichoso1984.chatgpt.site/tech-admin">Tech Admin Login</a>
+      </div>
+      <footer>Protected internal employee access</footer>
     </section>
   </main>
   <script src="site-auth.js"></script>

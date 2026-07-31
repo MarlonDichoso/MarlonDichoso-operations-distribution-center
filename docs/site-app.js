@@ -2,6 +2,7 @@
   const config = window.APP_RUNTIME_CONFIG || {};
   const headers = { apikey: config.supabaseAnonKey || "", Authorization: `Bearer ${config.supabaseAnonKey || ""}` };
   let records = [];
+  let selectedFilter = "total";
   const $ = (id) => document.getElementById(id);
   const completed = (value) => /complete|closed|done/i.test(value || "");
   const active = (value) => !completed(value) && !/archive|deferred/i.test(value || "");
@@ -17,11 +18,23 @@
   function render(list) {
     $("resultCount").textContent = `${list.length} record${list.length === 1 ? "" : "s"}`;
     $("activityList").innerHTML = list.slice(0, 12).map((record) => `
-      <a class="activity-row" href="${record.href}">
+      <a class="activity-item static-activity-link" href="${record.href}">
         <span class="activity-mark ${record.kind}">${record.kind === "tasks" ? "✓" : "⌂"}</span>
-        <span><small>${escapeHtml(record.app)}</small><strong>${escapeHtml(record.title)}</strong><em>${escapeHtml(record.meta || record.status)}</em></span>
-        <b>${escapeHtml(record.status)}</b>
-      </a>`).join("") || '<p class="loading">No matching records.</p>';
+        <div><span class="app-tag ${record.kind}">${escapeHtml(record.app)}</span><strong>${escapeHtml(record.title)}</strong><small>${escapeHtml(record.meta || record.status)}</small></div>
+        <span class="item-arrow">›</span>
+      </a>`).join("") || '<div class="empty-state">No matching records.</div>';
+  }
+  function filteredRecords(filter) {
+    if (filter === "active") return records.filter((item) => active(item.status));
+    if (filter === "attention") return records.filter(attention);
+    if (filter === "completed") return records.filter(thisMonth);
+    return records;
+  }
+  function activateMetric(card) {
+    selectedFilter = card.dataset.filter || "total";
+    document.querySelectorAll("[data-filter]").forEach((item) => item.classList.toggle("selected", item === card));
+    render(filteredRecords(selectedFilter));
+    document.getElementById("activity").scrollIntoView({ behavior: "smooth", block: "start" });
   }
   async function load() {
     try {
@@ -50,6 +63,7 @@
       $("activeCount").textContent = records.filter((item) => active(item.status)).length;
       $("attentionCount").textContent = records.filter(attention).length;
       $("completedCount").textContent = records.filter(thisMonth).length;
+      $("attentionBadge").textContent = records.filter(attention).length;
       $("adminCount").childNodes[0].nodeValue = `${admin.length} `;
       $("maintenanceCount").childNodes[0].nodeValue = `${maintenance.length} `;
       render(records);
@@ -59,11 +73,36 @@
   }
   $("search").addEventListener("input", function () {
     const query = this.value.trim().toLowerCase();
-    render(!query ? records : records.filter((record) => `${record.app} ${record.title} ${record.meta} ${record.status} ${record.priority}`.toLowerCase().includes(query)));
+    const source = filteredRecords(selectedFilter);
+    render(!query ? source : source.filter((record) => `${record.app} ${record.title} ${record.meta} ${record.status} ${record.priority}`.toLowerCase().includes(query)));
+  });
+  document.querySelectorAll("[data-filter]").forEach((card) => {
+    card.addEventListener("click", () => activateMetric(card));
+    card.addEventListener("keydown", (event) => {
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        activateMetric(card);
+      }
+    });
+  });
+  document.querySelectorAll("[data-href]").forEach((card) => {
+    const open = () => { location.href = card.dataset.href; };
+    card.addEventListener("click", (event) => {
+      if (!event.target.closest("a")) open();
+    });
+    card.addEventListener("keydown", (event) => {
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        open();
+      }
+    });
   });
   $("logout").addEventListener("click", function () {
     sessionStorage.removeItem("odc_employee_access");
     location.href = "login.html";
+  });
+  $("focusSearch").addEventListener("click", function () {
+    $("search").focus();
   });
   load();
 })();
