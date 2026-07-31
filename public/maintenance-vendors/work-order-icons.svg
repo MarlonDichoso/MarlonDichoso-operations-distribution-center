@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <symbol id="vendor-assigned-work" viewBox="0 0 24 24">
+      <path d="M9 6h6M9 10h4M8 3h8a2 2 0 0 1 2 2v16H6V5a2 2 0 0 1 2-2Z"/>
+      <path d="M9 3V2h6v1M9 15l2 2 4-4"/>
+    </symbol>
+
+    <symbol id="property-history" viewBox="0 0 24 24">
+      <path d="m3 11 9-7 9 7M5 10v10h14V10M9 20v-6h6v6"/>
+      <path d="M16.5 7.5A5 5 0 1 1 19 12"/>
+      <path d="M16.5 4.5v3h3"/>
+    </symbol>
+
+    <symbol id="add-vendor-task" viewBox="0 0 24 24">
+      <circle cx="9" cy="8" r="3"/>
+      <path d="M3.5 19a5.5 5.5 0 0 1 11 0M18 11v6M15 14h6"/>
+    </symbol>
+
+    <symbol id="import-work-orders" viewBox="0 0 24 24">
+      <path d="M12 3v12M7.5 7.5 12 3l4.5 4.5M5 14v6h14v-6"/>
+      <path d="M8 20v-3h8v3"/>
+    </symbol>
+
+    <symbol id="refresh" viewBox="0 0 24 24">
+      <path d="M20 7v5h-5M4 17v-5h5"/>
+      <path d="M6.1 8.5A7 7 0 0 1 18.8 10M17.9 15.5A7 7 0 0 1 5.2 14"/>
+    </symbol>
+
+    <symbol id="work-order-calendar" viewBox="0 0 24 24">
+      <rect x="3" y="5" width="18" height="16" rx="2"/>
+      <path d="M7 3v4M17 3v4M3 10h18"/>
+      <path d="m8 15 2 2 5-5"/>
+    </symbol>
+
+    <symbol id="archived-bucket" viewBox="0 0 24 24">
+      <path d="M4 7h16l-1 14H5L4 7ZM3 3h18v4H3z"/>
+      <path d="M9 12h6M12 12v5M9.5 14.5 12 17l2.5-2.5"/>
+    </symbol>
+
+    <symbol id="export-csv" viewBox="0 0 24 24">
+      <path d="M12 3v12M7.5 10.5 12 15l4.5-4.5M5 18v3h14v-3"/>
+      <path d="M18 5h3M19.5 3.5v3"/>
+    </symbol>
+
+    <symbol id="clear-completed" viewBox="0 0 24 24">
+      <path d="M4 7h16M9 3h6l1 4H8l1-4ZM6 7l1 14h10l1-14"/>
+      <path d="m9.5 14 1.7 1.7 3.6-3.7"/>
+    </symbol>
+  </defs>
+</svg>
