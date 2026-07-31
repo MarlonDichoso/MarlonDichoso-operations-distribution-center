@@ -1,0 +1,272 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <script src="../employee-auth-guard.js"></script>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#20262e">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <title>Maintenance Management Hub</title>
+  <link rel="stylesheet" href="styles.css?v=20260730-6">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+  <script src="app.js?v=20260730-6" defer></script>
+</head>
+<body>
+  <div class="topbar">
+    <div class="brand">
+      <span class="logo">M</span>
+      <div>
+        <strong>Maintenance Management Hub</strong>
+        <small>Buildium maintenance task workspace</small>
+      </div>
+    </div>
+    <input id="globalSearch" type="search" placeholder="Search maintenance tasks, vendors, properties">
+    <button id="openSettings" class="ghost admin-only" hidden>Settings</button>
+  </div>
+
+  <div class="shell">
+    <aside class="sidebar">
+      <button class="nav active" data-view="dashboard" data-mobile-label="Home"><svg class="btn-icon"><use href="work-order-icons.svg#vendor-assigned-work"></use></svg>Dashboard</button>
+      <button class="nav" data-view="vendors" data-mobile-label="Vendors"><svg class="btn-icon"><use href="work-order-icons.svg#vendor-assigned-work"></use></svg>Vendors</button>
+      <button class="nav" data-view="properties" data-mobile-label="Props"><svg class="btn-icon"><use href="work-order-icons.svg#property-history"></use></svg>Properties</button>
+      <button class="nav" data-view="calendar" data-mobile-label="Cal"><svg class="btn-icon"><use href="work-order-icons.svg#work-order-calendar"></use></svg>Calendar</button>
+      <button id="mobileMore" class="mobile-more secondary" type="button" data-mobile-label="More">More</button>
+      <hr>
+      <div class="mobile-actions" id="mobileActions">
+        <button id="openAddTask"><svg class="btn-icon"><use href="work-order-icons.svg#add-vendor-task"></use></svg>Add Task</button>
+        <button id="openImport" class="secondary"><svg class="btn-icon"><use href="work-order-icons.svg#import-work-orders"></use></svg>Import CSV</button>
+        <button id="refreshData" class="secondary"><svg class="btn-icon"><use href="work-order-icons.svg#refresh"></use></svg>Refresh</button>
+        <button id="exportCsv" class="secondary"><svg class="btn-icon"><use href="work-order-icons.svg#export-csv"></use></svg>Export CSV</button>
+        <button id="toggleArchived" class="secondary"><svg class="btn-icon"><use href="work-order-icons.svg#archived-bucket"></use></svg>Archived Bucket</button>
+      </div>
+    </aside>
+
+    <main class="content">
+      <p id="statusLine" class="status">Loading Maintenance Management Hub...</p>
+
+      <section class="cards">
+        <article><span>Total</span><strong id="statTotal">0</strong></article>
+        <article><span>Open</span><strong id="statOpen">0</strong></article>
+        <article><span>Due Soon</span><strong id="statDueSoon">0</strong></article>
+        <article><span>Waiting</span><strong id="statWaiting">0</strong></article>
+        <article><span>Archived</span><strong id="statArchived">0</strong></article>
+      </section>
+
+      <section id="dashboardView" class="panel view">
+        <div class="panel-head">
+          <div>
+            <h1>Maintenance Management Hub</h1>
+            <p>Use the left menu to review maintenance tasks by vendor, property, due date, or archive status.</p>
+          </div>
+        </div>
+        <div class="dashboard-empty">
+          <button class="secondary" type="button" data-dashboard-view="vendors">Open Vendors</button>
+          <button class="secondary" type="button" data-dashboard-view="properties">Open Properties</button>
+          <button class="secondary" type="button" data-dashboard-view="calendar">Open Calendar</button>
+        </div>
+      </section>
+
+      <section id="vendorsView" class="panel view" hidden>
+        <div id="vendorDirectory">
+          <div class="panel-head"><div><h1>Vendors</h1><p>Select a vendor to show assigned active maintenance tasks here.</p></div></div>
+          <div id="vendorList" class="list"></div>
+        </div>
+        <div id="vendorDetail" hidden>
+          <div class="panel-head">
+            <div>
+              <p class="eyebrow">Vendor Assigned Work</p>
+              <h1 id="vendorDetailName"></h1>
+              <p id="vendorDetailMeta" class="meta"></p>
+            </div>
+            <button id="vendorBack" class="secondary" type="button">&lt; Back</button>
+          </div>
+          <div class="inline-vendor-actions">
+            <button class="secondary" id="downloadVendorPdf" type="button">Download PDF</button>
+            <button class="secondary" id="downloadVendorSpreadsheet" type="button">Download Spreadsheet</button>
+          </div>
+          <div class="table-wrap">
+            <table class="vendor-table">
+              <thead><tr><th>Task ID</th><th>Maintenance Task</th><th>Property Address</th><th>Category</th><th>Priority</th><th>Due</th><th>Status</th><th>Notes</th><th>Actions</th></tr></thead>
+              <tbody id="vendorTaskTable"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section id="propertiesView" class="panel view" hidden>
+        <div id="propertyDirectory">
+          <div class="panel-head"><div><h1>Property History</h1><p>Select a property to show all maintenance tasks and maintenance history here.</p></div></div>
+          <div id="propertyList" class="list"></div>
+        </div>
+        <div id="propertyDetail" hidden>
+          <div class="panel-head">
+            <div>
+              <p class="eyebrow">Property Maintenance History</p>
+              <h1 id="propertyDetailName"></h1>
+              <p id="propertyDetailMeta" class="meta"></p>
+            </div>
+            <button id="propertyBack" class="secondary" type="button">&lt; Back</button>
+          </div>
+          <section class="property-mini-stats">
+            <article><span>Total Maintenance Tasks</span><strong id="propertyTotalCount">0</strong></article>
+            <article><span>Open</span><strong id="propertyOpenCount">0</strong></article>
+            <article><span>Completed</span><strong id="propertyCompletedCount">0</strong></article>
+            <article><span>Last Activity</span><strong id="propertyLastActivity">-</strong></article>
+          </section>
+          <div class="table-wrap">
+            <table class="property-table">
+              <thead><tr><th>Task ID</th><th>Maintenance Task</th><th>Vendor</th><th>Category</th><th>Priority</th><th>Due</th><th>Status</th><th>Last Updated</th><th>Notes</th><th>Actions</th></tr></thead>
+              <tbody id="propertyTaskTable"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section id="calendarView" class="panel view" hidden>
+        <div class="panel-head calendar-head">
+          <div>
+            <h1>Due Date Calendar</h1>
+            <p>Click any maintenance task to open its details.</p>
+          </div>
+          <button id="calendarClose" class="icon" type="button">x</button>
+        </div>
+        <div class="calendar-toolbar">
+          <h2 id="calendarTitle"></h2>
+          <div class="calendar-controls">
+            <button id="calendarPrev" class="secondary" type="button">&lt; Previous</button>
+            <button id="calendarToday" class="secondary" type="button">Today</button>
+            <button id="calendarNext" class="secondary" type="button">Next &gt;</button>
+          </div>
+        </div>
+        <div id="calendarList" class="calendar-list"></div>
+      </section>
+
+      <section id="archivedView" class="panel view" hidden>
+        <div class="panel-head">
+          <div>
+            <h1>Archived Bucket</h1>
+            <p>Completed or archived maintenance tasks are stored here until you restore or permanently delete them.</p>
+          </div>
+          <button id="archivedBack" class="secondary" type="button">&lt; Back</button>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>Task ID</th><th>Maintenance Task</th><th>Property</th><th>Vendor</th><th>Priority</th><th>Due</th><th>Status</th><th>Archived</th><th>Actions</th></tr>
+            </thead>
+            <tbody id="archivedTaskRows"></tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div id="modalBackdrop" class="backdrop" hidden></div>
+
+  <section id="settingsModal" class="modal" hidden>
+    <div class="modal-head"><h2>Supabase Settings</h2><button class="icon" data-close>x</button></div>
+    <form id="settingsForm" class="form">
+      <label>Supabase Project URL<input id="supabaseUrl" placeholder="https://your-project.supabase.co" required></label>
+      <label>Supabase anon/public key<input id="supabaseKey" required></label>
+      <p class="hint">Use the anon/public key only. Never paste the service role key into a website.</p>
+      <div class="actions"><button>Save Settings</button><button type="button" class="secondary" id="testConnection">Test Connection</button></div>
+    </form>
+  </section>
+
+  <section id="importModal" class="modal" hidden>
+    <div class="modal-head"><h2>Import Buildium CSV</h2><button class="icon" data-close>x</button></div>
+    <form id="importForm" class="form">
+      <label>Buildium CSV export<input id="csvFile" type="file" accept=".csv,text/csv" required></label>
+      <p class="hint">Import replaces current Buildium task rows, while preserving matching estimates, updates, photos, and linked tasks by Task ID.</p>
+      <div class="actions"><button>Import CSV</button><button type="button" class="secondary" data-close>Cancel</button></div>
+      <p id="importResult" class="hint"></p>
+    </form>
+  </section>
+
+  <section id="taskModal" class="modal wide" hidden>
+    <div class="modal-head">
+      <h2 id="taskModalTitle">Maintenance Portal</h2>
+      <div class="task-head-actions">
+        <button type="button" id="taskHeaderUpdate">Update task</button>
+        <button type="button" class="secondary" id="taskHeaderEdit">Edit</button>
+        <button type="button" class="secondary" data-close>Close</button>
+        <button type="button" class="icon" data-close>x</button>
+      </div>
+    </div>
+    <div id="taskDetail"></div>
+  </section>
+
+  <section id="addModal" class="modal" hidden>
+    <div class="modal-head"><h2>Add Maintenance Task</h2><button class="icon" data-close>x</button></div>
+    <form id="taskForm" class="form">
+      <label>Task name<input name="task_name" required></label>
+      <label>Vendor<input name="vendor_name" placeholder="Unassigned Work"></label>
+      <div class="grid2"><label>Task ID<input name="task_id"></label><label>Maintenance task URL<input name="work_order_url"></label></div>
+      <div class="grid2"><label>Property<input name="property_name"></label><label>Unit<input name="unit_number" placeholder="Leave blank for property level"></label></div>
+      <div class="grid2"><label>Category<input name="category" value="Maintenance Request"></label><label>Priority<select name="priority"><option>High</option><option selected>Medium</option><option>Low</option></select></label></div>
+      <div class="grid2"><label>Due date<input type="date" name="due_date"></label><label>Status<select name="status"><option>Open</option><option>In Progress</option><option>Waiting on Vendor</option><option>Waiting for Estimate</option><option>Waiting for Estimate Approval</option><option>Completed</option></select></label></div>
+      <label>Notes<textarea name="notes" rows="4"></textarea></label>
+      <div class="actions"><button>Save Task</button><button type="button" class="secondary" data-close>Cancel</button></div>
+    </form>
+  </section>
+
+  <section id="editModal" class="modal" hidden>
+    <div class="modal-head"><h2>Task Details</h2><button class="icon" data-close>x</button></div>
+    <form id="editTaskForm" class="form">
+      <input type="hidden" name="id">
+      <label>Vendor<input name="vendor_name" placeholder="Unassigned Work"></label>
+      <div class="grid2"><label>Task ID<input name="task_id"></label><label>Maintenance task URL<input name="work_order_url"></label></div>
+      <label>Maintenance Task<input name="task_name" required></label>
+      <div class="grid2"><label>Property<input name="property_name"></label><label>Unit<input name="unit_number" placeholder="Leave blank for property level"></label></div>
+      <div class="grid2"><label>Category<input name="category"></label><label>Priority<select name="priority"><option>High</option><option>Medium</option><option>Low</option></select></label></div>
+      <div class="grid2"><label>Due date<input type="date" name="due_date"></label><label>Status<select name="status"><option>Open</option><option>In Progress</option><option>Waiting on Vendor</option><option>Waiting for Estimate</option><option>Waiting for Estimate Approval</option><option>Completed</option></select></label></div>
+      <label>Notes<textarea name="notes" rows="4"></textarea></label>
+      <div class="actions"><button>✓ Save Changes</button><button type="button" class="secondary" data-close>x Cancel</button></div>
+    </form>
+  </section>
+
+  <section id="updatesModal" class="modal" hidden>
+    <div class="modal-head"><div><h2 id="updatesTitle">Work Order Updates</h2><p id="updatesMeta" class="hint"></p></div><button class="icon" data-close>x</button></div>
+    <form id="updatesForm" class="form">
+      <input type="hidden" name="id">
+      <label>Add update<textarea name="message" rows="5" placeholder="Type the newest update here..." required></textarea></label>
+      <div class="actions"><button>Add Update</button><button type="button" class="secondary" data-close>Close</button></div>
+    </form>
+    <div id="updatesList" class="updates-modal-list"></div>
+  </section>
+
+  <section id="estimatesModal" class="modal" hidden>
+    <div class="modal-head"><div><h2 id="estimatesTitle">Vendor Estimates</h2><p id="estimatesMeta" class="hint"></p></div><button class="icon" data-close>x</button></div>
+    <form id="estimatesForm" class="form">
+      <input type="hidden" name="id">
+      <div class="grid2">
+        <label>Vendor<input name="vendor" placeholder="Vendor name" required></label>
+        <label>Status<select name="status"><option>Pending</option><option>Approved</option><option>Declined</option></select></label>
+      </div>
+      <label>Estimate details</label>
+      <table class="estimate-entry-table">
+        <thead><tr><th>Description</th><th>Qty</th><th>Unit Cost</th><th>Total Amount</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><input name="line_description" placeholder="Scope, labor, materials, timeline, or notes"></td>
+            <td><input name="line_qty" type="number" step="0.01" value="1"></td>
+            <td><input name="line_unit_cost" type="number" step="0.01" value="0.00"></td>
+            <td><input name="amount" type="number" step="0.01" value="0.00" readonly></td>
+          </tr>
+        </tbody>
+      </table>
+      <label>Estimate notes<textarea name="notes" rows="3" placeholder="Extra notes, exclusions, or approval details..."></textarea></label>
+      <label>Quote attachment
+        <input name="attachment" type="file" accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png,application/pdf,image/*">
+        <small class="hint">Optional: attach the vendor's PDF, document, spreadsheet, or image (maximum 10 MB).</small>
+      </label>
+      <div class="actions"><button>Add Estimate</button><button type="button" class="secondary" data-close>Close</button></div>
+    </form>
+    <div id="estimatesList" class="estimates-modal-list"></div>
+  </section>
+</body>
+</html>
